@@ -50,12 +50,12 @@ public class HudiDataStreamReader {
      * @param env The Flink StreamExecutionEnvironment.
      */
     private static void configureCheckpointing(StreamExecutionEnvironment env) {
-        env.enableCheckpointing(5000); // Checkpoint every 5 seconds
+        env.enableCheckpointing(5000); // Checkpoint every 60 seconds
         CheckpointConfig checkpointConfig = env.getCheckpointConfig();
         checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-        checkpointConfig.setMinPauseBetweenCheckpoints(1000);
-        checkpointConfig.setCheckpointTimeout(60000);
-        checkpointConfig.enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+        checkpointConfig.setMinPauseBetweenCheckpoints(10000); // Minimum time between checkpoints
+        checkpointConfig.setCheckpointTimeout(60000); // Checkpoint timeout in milliseconds
+        checkpointConfig.setCheckpointStorage("file:///tmp/hudi_flink_checkpoint_2");
     }
 
     /**

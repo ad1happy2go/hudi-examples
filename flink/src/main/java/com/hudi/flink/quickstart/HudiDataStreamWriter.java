@@ -16,9 +16,11 @@ import org.apache.flink.table.runtime.typeutils.InternalSerializers;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.LogicalType;
 import org.apache.flink.table.types.logical.RowType;
+import org.apache.flink.types.RowKind;
 import org.apache.hudi.common.model.HoodieTableType;
 import org.apache.hudi.configuration.FlinkOptions;
 import org.apache.hudi.util.HoodiePipeline;
+import java.util.UUID;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -57,10 +59,10 @@ public class HudiDataStreamWriter {
 	 * @param env The Flink StreamExecutionEnvironment.
 	 */
 	private static void configureCheckpointing(StreamExecutionEnvironment env) {
-		env.enableCheckpointing(60000); // Checkpoint every 60 seconds
+		env.enableCheckpointing(5000); // Checkpoint every 5 seconds
 		CheckpointConfig checkpointConfig = env.getCheckpointConfig();
 		checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-		checkpointConfig.setMinPauseBetweenCheckpoints(1000); // Minimum time between checkpoints
+		checkpointConfig.setMinPauseBetweenCheckpoints(10000); // Minimum time between checkpoints
 		checkpointConfig.setCheckpointTimeout(60000); // Checkpoint timeout in milliseconds
 		checkpointConfig.setCheckpointStorage("file:///tmp/hudi_flink_checkpoint_2");
 	}
@@ -76,6 +78,7 @@ public class HudiDataStreamWriter {
 		options.put(FlinkOptions.PATH.key(), basePath);
 		options.put(FlinkOptions.TABLE_TYPE.key(), HoodieTableType.MERGE_ON_READ.name());
 		options.put(FlinkOptions.PRECOMBINE_FIELD.key(), "ts");
+		options.put(FlinkOptions.RECORD_KEY_FIELD.key(), "uuid");
 		options.put(FlinkOptions.IGNORE_FAILED.key(), "true");
 		return options;
 	}
@@ -99,71 +102,65 @@ public class HudiDataStreamWriter {
 				.options(options);
 	}
 
-	public static List<RowData> DATA_SET_INSERT = Arrays.asList(
-			insertRow(StringData.fromString("id1"), StringData.fromString("Danny"), 23,
-					TimestampData.fromEpochMillis(1), StringData.fromString("par1")),
-			insertRow(StringData.fromString("id2"), StringData.fromString("Stephen"), 33,
-					TimestampData.fromEpochMillis(2), StringData.fromString("par1")),
-			insertRow(StringData.fromString("id3"), StringData.fromString("Julian"), 53,
-					TimestampData.fromEpochMillis(3), StringData.fromString("par2")),
-			insertRow(StringData.fromString("id4"), StringData.fromString("Fabian"), 31,
-					TimestampData.fromEpochMillis(4), StringData.fromString("par2")),
-			insertRow(StringData.fromString("id5"), StringData.fromString("Sophia"), 18,
-					TimestampData.fromEpochMillis(5), StringData.fromString("par3")),
-			insertRow(StringData.fromString("id6"), StringData.fromString("Emma"), 20,
-					TimestampData.fromEpochMillis(6), StringData.fromString("par3")),
-			insertRow(StringData.fromString("id7"), StringData.fromString("Bob"), 44,
-					TimestampData.fromEpochMillis(7), StringData.fromString("par4")),
-			insertRow(StringData.fromString("id8"), StringData.fromString("Han"), 56,
-					TimestampData.fromEpochMillis(8), StringData.fromString("par4"))
-	);
-
-	public static final DataType ROW_DATA_TYPE = DataTypes.ROW(
-					DataTypes.FIELD("uuid", DataTypes.VARCHAR(20)),// record key
-					DataTypes.FIELD("name", DataTypes.VARCHAR(10)),
-					DataTypes.FIELD("age", DataTypes.INT()),
-					DataTypes.FIELD("ts", DataTypes.TIMESTAMP(3)), // precombine field
-					DataTypes.FIELD("partition", DataTypes.VARCHAR(10)))
-			.notNull();
-
-	public static final RowType ROW_TYPE = (RowType) ROW_DATA_TYPE.getLogicalType();
-
-	public static BinaryRowData insertRow(Object... fields) {
-		return insertRow(ROW_TYPE, fields);
-	}
-
-	public static BinaryRowData insertRow(RowType rowType, Object... fields) {
-		LogicalType[] types = rowType.getFields().stream().map(RowType.RowField::getType)
-				.toArray(LogicalType[]::new);
-		BinaryRowData row = new BinaryRowData(fields.length);
-		BinaryRowWriter writer = new BinaryRowWriter(row);
-		writer.reset();
-		for (int i = 0; i < fields.length; i++) {
-			Object field = fields[i];
-			if (field == null) {
-				writer.setNullAt(i);
-			} else {
-				BinaryWriter.write(writer, i, field, types[i], InternalSerializers.create(types[i]));
-			}
-		}
-		writer.complete();
-		return row;
-	}
-
 	/**
 	 * Sample data source for generating RowData objects.
 	 */
 	static class SampleDataSource implements SourceFunction<RowData> {
 		private volatile boolean isRunning = true;
-		private final Random random = new Random();
+		public static BinaryRowData insertRow(Object... fields) {
+
+			DataType ROW_DATA_TYPE = DataTypes.ROW(
+							DataTypes.FIELD("uuid", DataTypes.VARCHAR(20)),// record key
+							DataTypes.FIELD("name", DataTypes.VARCHAR(10)),
+							DataTypes.FIELD("age", DataTypes.INT()),
+							DataTypes.FIELD("ts", DataTypes.TIMESTAMP(3)), // precombine field
+							DataTypes.FIELD("partition", DataTypes.VARCHAR(10)))
+					.notNull();
+			RowType ROW_TYPE = (RowType) ROW_DATA_TYPE.getLogicalType();
+			LogicalType[] types = ROW_TYPE.getFields().stream().map(RowType.RowField::getType)
+					.toArray(LogicalType[]::new);
+			BinaryRowData row = new BinaryRowData(fields.length);
+			BinaryRowWriter writer = new BinaryRowWriter(row);
+			writer.reset();
+			for (int i = 0; i < fields.length; i++) {
+				Object field = fields[i];
+				if (field == null) {
+					writer.setNullAt(i);
+				} else {
+					BinaryWriter.write(writer, i, field, types[i], InternalSerializers.create(types[i]));
+				}
+			}
+			writer.complete();
+			return row;
+		}
 
 		@Override
 		public void run(SourceContext<RowData> ctx) throws Exception {
+			int batchNum = 0;
 			while (isRunning) {
-				for (RowData row : DATA_SET_INSERT) {
-					ctx.collect(row);
+				batchNum ++;
+				// For Every Batch, it adds two new rows with uuid and updates the row with uuid
+				List<RowData> DATA_SET_INSERT = Arrays.asList(
+						insertRow(StringData.fromString(UUID.randomUUID().toString()), StringData.fromString("Danny"), 23,
+								TimestampData.fromEpochMillis(1), StringData.fromString("par1")),
+						insertRow(StringData.fromString(UUID.randomUUID().toString()), StringData.fromString("Stephen"), 33,
+								TimestampData.fromEpochMillis(2), StringData.fromString("par1")),
+						insertRow(StringData.fromString("id1"), StringData.fromString("Julian"), 53,
+								TimestampData.fromEpochMillis(3), StringData.fromString("par2"))
+				);
+				if(batchNum != 10) {
+					for (RowData row : DATA_SET_INSERT) {
+						ctx.collect(row);
+					}
+				}else{
+					// For 10th Batch Delete the row with record key id1
+					RowData rowToBeDeleted = DATA_SET_INSERT.get(2);
+					rowToBeDeleted.setRowKind(RowKind.DELETE);
+					ctx.collect(rowToBeDeleted);
+					// Stop the stream once deleted
+					isRunning = false;
 				}
-				TimeUnit.MILLISECONDS.sleep(1000); // Simulate a delay
+				TimeUnit.MILLISECONDS.sleep(10000); // Simulate a delay
 			}
 		}
 
