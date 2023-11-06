@@ -19,7 +19,7 @@
     "--job-bookmark-option" : "job-bookmark-disable",
     "--job-language" : "python",
     "--TempDir" : "s3://aws-glue-assets-582558643208-us-west-2/temporary/",
-    "--extra-jars" : "s3://rxusandbox-us-west-2/jars/spark33/hudi-spark3.3-bundle_2.12-0.14.0.jar"
+    "--extra-jars" : "s3://rxusandbox-us-west-2/jars/spark33/hudi-spark3.3-bundle_2.12-0.13.1.jar"
   },
   "maxRetries" : 0,
   "allocatedCapacity" : 40,

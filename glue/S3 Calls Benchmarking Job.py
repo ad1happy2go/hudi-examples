@@ -29,16 +29,14 @@ job.init(args['JOB_NAME'], args)
 
 # ============================== Settings =======================================
 db_name = "hudidb_oss"
-table_name = "s3_calls_bench_testing_0611"
+table_name = "s3_calls_bench_06112023_0_13_1"
 path = "s3://s3-calls-log-bucket/hudi/output/" + table_name
 method = 'upsert'
 table_type = "COPY_ON_WRITE"
 # ====================================================================================
-spark.sql(f""" DROP TABLE {db_name}.{table_name}""")
+spark.sql(f""" DROP TABLE IF EXISTS {db_name}.{table_name}""")
 spark.sql(f"""
-CREATE
-    TABLE
-        {db_name}.{table_name}(
+CREATE TABLE {db_name}.{table_name}(
             ss_sold_date_sk INT,
             ss_sold_time_sk INT,
             ss_item_sk INT,
@@ -108,36 +106,28 @@ CREATE
         )
 """)
 
-spark.read.table(f"{db_name}.store_sales_external").withColumn("ss_sold_time_sk",lit("1")).createOrReplaceTempView("external")
+hudi_options = {
+    'hoodie.table.name': table_name,
+    'hoodie.datasource.write.partitionpath.field': 'ss_sold_date_sk',
+    'hoodie.datasource.write.recordkey.field' : 'ss_item_sk,ss_ticket_number',
+    'hoodie.datasource.write.precombine.field': 'ss_sold_time_sk'
+}
 
-spark.sql(f"""INSERT OVERWRITE {db_name}.{table_name} SELECT * FROM external LIMIT 10""")
-
-spark.read.table(f"{db_name}.store_sales_upsert_2452").withColumn("ss_sold_time_sk",lit("2")).write.format("hudi").mode("append").save(path)
-
-spark.read.table(f"{db_name}.store_sales_merge_2452").withColumn("ss_sold_time_sk",lit("3")).createOrReplaceTempView("store_sales_merge")
-
-spark.sql(f"""MERGE INTO {db_name}.{table_name} target USING store_sales_merge source ON 
-source.ss_sold_date_sk = target.ss_sold_date_sk and source.sr_ticket_number = target.ss_ticket_number and source.ss_item_sk = target.ss_item_sk
-WHEN MATCHED SET target.ss_list_price = source.ss_list_price""")
-
-spark.sql(f"""MERGE INTO {db_name}.{table_name}
-                                USING(
-                                SELECT
-                                    *
-                                FROM (SELECT MIN( d_date_sk ) AS min_date
-                                        FROM {db_name}.date_dim
-                                        WHERE d_date BETWEEN '2013-01-01' AND '2013-01-02'
-                                    ) r
-                                JOIN(
-                                        SELECT
-                                            MAX( d_date_sk ) AS max_date
-                                        FROM
-                                            {db_name}.date_dim
-                                        WHERE d_date BETWEEN '2013-01-01' AND '2013-01-02'
-                                    ) s
-                            ) SOURCE ON
-                            ss_sold_date_sk >= min_date
-                            AND ss_sold_date_sk <= max_date
-                            WHEN MATCHED THEN DELETE""")
+spark.read.table(f"{db_name}.store_sales_external").withColumn("ss_sold_time_sk",lit(1)).write.options(**hudi_options).format("hudi").mode("overwrite").save(path)
 
 
+
+spark.read.table(f"{db_name}.store_sales_upsert_2452").withColumn("ss_sold_time_sk",lit(2)).write.options(**hudi_options).format("hudi").mode("append").save(path)
+
+spark.read.table(f"{db_name}.store_sales_merge_2452").withColumn("ss_sold_time_sk",lit(3)).createOrReplaceTempView("source")
+spark.read.format("hudi").laod(f"{db_name}.{table_name}").createOrReplaceTempView("target")
+
+spark.sql(f"""MERGE INTO target USING  source ON 
+source.ss_sold_date_sk = target.ss_sold_date_sk and source.ss_ticket_number = target.ss_ticket_number and source.ss_item_sk = target.ss_item_sk
+WHEN MATCHED THEN UPDATE SET target.ss_list_price = source.ss_list_price""")
+
+spark.read.format("hudi").load(f"{db_name}.{table_name}").createOrReplaceTempView("target")
+
+spark.sql(f"""MERGE INTO target USING source ON 
+source.ss_sold_date_sk = target.ss_sold_date_sk and source.ss_ticket_number = target.ss_ticket_number and source.ss_item_sk = target.ss_item_sk
+WHEN MATCHED THEN DELETE""")
