@@ -61,7 +61,7 @@ def read_s3_logs(spark, access_logs_path, table_name):
 
 # Find total number of S3 calls
 def total_s3_calls(df):
-    out = df.groupBy("call_type").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).show(20, False)
+    out = df.groupBy("call_type").agg(count(lit(1)).alias("count")).orderBy(col("count").desc())
     out.write.format("com.crealytics.spark.excel") \
     .option("dataAddress", "'call_type'!B3") \
     .option("header", "true") \
