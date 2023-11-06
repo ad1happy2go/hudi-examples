@@ -1,0 +1,38 @@
+{
+  "name" : "S3 Calls benchmarking Code",
+  "description" : "",
+  "role" : "arn:aws:iam::582558643208:role/AWSGlueServiceRoleDefault",
+  "executionProperty" : {
+    "maxConcurrentRuns" : 1
+  },
+  "command" : {
+    "name" : "glueetl",
+    "scriptLocation" : "s3://aws-glue-assets-582558643208-us-west-2/scripts/S3 Calls benchmarking Code.py",
+    "pythonVersion" : "3"
+  },
+  "defaultArguments" : {
+    "--enable-metrics" : "true",
+    "--spark-event-logs-path" : "s3://aws-glue-assets-582558643208-us-west-2/sparkHistoryLogs/",
+    "--enable-job-insights" : "false",
+    "--enable-glue-datacatalog" : "true",
+    "--enable-continuous-cloudwatch-log" : "true",
+    "--job-bookmark-option" : "job-bookmark-disable",
+    "--job-language" : "python",
+    "--TempDir" : "s3://aws-glue-assets-582558643208-us-west-2/temporary/",
+    "--extra-jars" : "s3://rxusandbox-us-west-2/jars/spark33/hudi-spark3.3-bundle_2.12-0.13.1.jar"
+  },
+  "maxRetries" : 0,
+  "allocatedCapacity" : 2,
+  "timeout" : 2880,
+  "maxCapacity" : 2.0,
+  "glueVersion" : "4.0",
+  "numberOfWorkers" : 2,
+  "workerType" : "G.1X",
+  "executionClass" : "STANDARD",
+  "sourceControlDetails" : {
+    "provider" : "GITHUB",
+    "repository" : "hudi-examples",
+    "branch" : "main",
+    "folder" : "glue"
+  }
+}
