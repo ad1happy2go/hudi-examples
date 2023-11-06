@@ -19,7 +19,7 @@ table_name = "s3_calls_bench_0_13_1_0611"
 hudi_table_bucket_name = "s3-calls-log-bucket"
 hudi_table_base_path = f"hudi/output/{table_name}"
 access_logs_path = "s3a://rxusandbox-us-west-2/s3_access_logs/"
-excel_path = "s3a://rxusandbox-us-west-2/s3_calls_bench_results/" + table_name + ".xlsx"
+excel_path = "file:///tmp/s3_calls_bench_results/" + table_name + ".xlsx"
 
 # Create a Spark session
 def create_spark_session(isLocalRun = True):
@@ -32,7 +32,7 @@ def create_spark_session(isLocalRun = True):
             .config("spark.hadoop.fs.s3a.secret.key", os.environ.get("AWS_SECRET_ACCESS_KEY")) \
             .config("spark.hadoop.fs.s3a.session.token", os.environ.get("AWS_SESSION_TOKEN")) \
             .config('spark.hadoop.fs.s3a.aws.credentials.provider', 'org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider') \
-            .config("spark.jars.packages", "com.amazonaws:aws-java-sdk-bundle:1.11.375,org.apache.hadoop:hadoop-aws:3.2.0,org.apache.hudi:hudi-spark3.2-bundle_2.12:0.14.0,com.crealytics:spark-excel_2.12:3.5.0_0.20.1") \
+            .config("spark.jars.packages", "com.amazonaws:aws-java-sdk-bundle:1.11.375,org.apache.hadoop:hadoop-aws:3.2.0,org.apache.hudi:hudi-spark3.2-bundle_2.12:0.14.0,com.crealytics:spark-excel_2.12:0.12.2") \
             .config('spark.sql.legacy.pathOptionBehavior.enabled', 'true').getOrCreate())
     else:
         args = getResolvedOptions(sys.argv, ['JOB_NAME'])
@@ -64,20 +64,16 @@ def total_s3_calls(df):
     out = df.groupBy("call_type").agg(count(lit(1)).alias("count")).orderBy(col("count").desc())
     out.write.format("com.crealytics.spark.excel") \
     .option("dataAddress", "'call_type'!B3") \
-    .option("header", "true") \
-    .option("dateFormat", "yy-mmm-d") \
-    .option("timestampFormat", "mm-dd-yyyy hh:mm:ss") \
-    .mode("append") \
+    .option("useHeader", "true") \
+    .mode("overwrite") \
     .save(excel_path)
 
 # Find 20 paths with most calls
 def top_paths_with_calls(df):
-    out = df.groupBy("call_type", "path").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).show(20, False)
+    out = df.groupBy("call_type", "path").agg(count(lit(1)).alias("count")).orderBy(col("count").desc())
     out.write.format("com.crealytics.spark.excel") \
         .option("dataAddress", "'call_type'!B3") \
-        .option("header", "true") \
-        .option("dateFormat", "yy-mmm-d") \
-        .option("timestampFormat", "mm-dd-yyyy hh:mm:ss") \
+        .option("useHeader", "true") \
         .mode("append") \
         .save(excel_path)
 
@@ -109,14 +105,19 @@ def list_s3_objects(s3, hudi_table_bucket_name, hudi_table_base_path):
     return commit_range
 
 # Number of calls for each commit
-def calls_for_each_commit(df, commit_range):
+def calls_for_each_commit(df, commit_range, spark):
     df.count()
-    commit_counts = {}
+    commit_counts = []
     for commit in commit_range:
         print(commit_range[commit])
-        commit_counts[commit] = df.filter(col("timestamp") <= commit_range[commit][0]).filter(col("timestamp") >= commit_range[commit][2]).count()
+        commit_counts.append([commit, df.filter(col("timestamp") <= commit_range[commit][0]).filter(col("timestamp") >= commit_range[commit][2]).count()])
 
-    return commit_counts
+    out = spark.createDataFrame(commit_counts, ["commit", "call_count"])
+    out.write.format("com.crealytics.spark.excel") \
+        .option("dataAddress", "'commit_wise'!B3") \
+        .option("useHeader", "true") \
+        .mode("append") \
+        .save(excel_path)
 
 # Main function to orchestrate the analysis
 def main():
@@ -124,23 +125,16 @@ def main():
     df = read_s3_logs(spark, access_logs_path, table_name)
 
     print("Total S3 calls by call type")
-    total_s3_calls(df)
+    # total_s3_calls(df)
 
     print("20 Paths with maximum Calls")
-    top_paths_with_calls(df)
+    # top_paths_with_calls(df)
 
     s3 = init_s3_client()
     commit_range = list_s3_objects(s3, hudi_table_bucket_name, hudi_table_base_path)
 
     print("Number of calls for each commit")
-    commit_counts = calls_for_each_commit(df, commit_range)
-    spark.createDataFrame(commit_counts).write.format("com.crealytics.spark.excel") \
-        .option("dataAddress", "'call_type'!B3") \
-        .option("header", "true") \
-        .option("dateFormat", "yy-mmm-d") \
-        .option("timestampFormat", "mm-dd-yyyy hh:mm:ss") \
-        .mode("append") \
-        .save(excel_path)
+    calls_for_each_commit(df, commit_range, spark)
 
 if __name__ == "__main__":
     main()

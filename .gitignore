@@ -64,6 +64,7 @@ local.properties
 #######################################
 .out
 .idea/*
+*/.idea/*
 !.idea/vcs.xml
 *.ipr
 *.iws
