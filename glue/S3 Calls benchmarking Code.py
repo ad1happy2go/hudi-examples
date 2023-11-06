@@ -14,19 +14,15 @@ try:
     from awsglue.utils import getResolvedOptions
 except Exception as e:
     print("Modules are missing: {}".format(e))
-
-## @params: [JOB_NAME]
-args = getResolvedOptions(sys.argv, ['JOB_NAME'])
-
-
 # Define constants
-table_name = "s3_calls_bench_0611_0_14_0"
+table_name = "s3_calls_bench_0_13_1_0611"
 hudi_table_bucket_name = "s3-calls-log-bucket"
 hudi_table_base_path = f"hudi/output/{table_name}"
 access_logs_path = "s3a://rxusandbox-us-west-2/s3_access_logs/"
+excel_path = "s3a://rxusandbox-us-west-2/s3_calls_bench_results/" + table_name + ".xlsx"
 
 # Create a Spark session
-def create_spark_session(isLocalRun = False):
+def create_spark_session(isLocalRun = True):
     if(isLocalRun):
         return (SparkSession.builder.config('spark.serializer', 'org.apache.spark.serializer.KryoSerializer') \
             .config('spark.sql.hive.convertMetastoreParquet', 'false') \
@@ -36,8 +32,10 @@ def create_spark_session(isLocalRun = False):
             .config("spark.hadoop.fs.s3a.secret.key", os.environ.get("AWS_SECRET_ACCESS_KEY")) \
             .config("spark.hadoop.fs.s3a.session.token", os.environ.get("AWS_SESSION_TOKEN")) \
             .config('spark.hadoop.fs.s3a.aws.credentials.provider', 'org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider') \
+            .config("spark.jars.packages", "com.amazonaws:aws-java-sdk-bundle:1.11.375,org.apache.hadoop:hadoop-aws:3.2.0,org.apache.hudi:hudi-spark3.2-bundle_2.12:0.14.0,com.crealytics:spark-excel_2.12:3.5.0_0.20.1") \
             .config('spark.sql.legacy.pathOptionBehavior.enabled', 'true').getOrCreate())
     else:
+        args = getResolvedOptions(sys.argv, ['JOB_NAME'])
         return (SparkSession.builder.config('spark.serializer', 'org.apache.spark.serializer.KryoSerializer') \
             .config('spark.sql.hive.convertMetastoreParquet', 'false') \
             .config('spark.sql.catalog.spark_catalog', 'org.apache.spark.sql.hudi.catalog.HoodieCatalog') \
@@ -58,17 +56,30 @@ def read_s3_logs(spark, access_logs_path, table_name):
         .withColumn("call_type", expr("""split(value,' ')[7]""")) \
         .withColumn("path",  expr("""case when call_type = '''REST.GET.BUCKET''' then split(value,' ')[10] else split(value,' ')[8] end""")) \
         .filter(col("value").like(f"%{table_name}%"))
-
     df.cache()
     return df
 
 # Find total number of S3 calls
 def total_s3_calls(df):
-    return df.groupBy("call_type").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).show(20, False)
+    out = df.groupBy("call_type").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).show(20, False)
+    out.write.format("com.crealytics.spark.excel") \
+    .option("dataAddress", "'call_type'!B3") \
+    .option("header", "true") \
+    .option("dateFormat", "yy-mmm-d") \
+    .option("timestampFormat", "mm-dd-yyyy hh:mm:ss") \
+    .mode("append") \
+    .save(excel_path)
 
 # Find 20 paths with most calls
 def top_paths_with_calls(df):
-    return df.groupBy("call_type", "path").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).show(20, False)
+    out = df.groupBy("call_type", "path").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).show(20, False)
+    out.write.format("com.crealytics.spark.excel") \
+        .option("dataAddress", "'call_type'!B3") \
+        .option("header", "true") \
+        .option("dateFormat", "yy-mmm-d") \
+        .option("timestampFormat", "mm-dd-yyyy hh:mm:ss") \
+        .mode("append") \
+        .save(excel_path)
 
 # Initialize the S3 client
 def init_s3_client():
@@ -112,7 +123,7 @@ def main():
     spark = create_spark_session()
     df = read_s3_logs(spark, access_logs_path, table_name)
 
-    print("20 Paths with maximum Calls")
+    print("Total S3 calls by call type")
     total_s3_calls(df)
 
     print("20 Paths with maximum Calls")
@@ -123,7 +134,13 @@ def main():
 
     print("Number of calls for each commit")
     commit_counts = calls_for_each_commit(df, commit_range)
-    print("\n".join(f"{c} - {commit_counts[c]}" for c in commit_counts))
+    spark.createDataFrame(commit_counts).write.format("com.crealytics.spark.excel") \
+        .option("dataAddress", "'call_type'!B3") \
+        .option("header", "true") \
+        .option("dateFormat", "yy-mmm-d") \
+        .option("timestampFormat", "mm-dd-yyyy hh:mm:ss") \
+        .mode("append") \
+        .save(excel_path)
 
 if __name__ == "__main__":
     main()

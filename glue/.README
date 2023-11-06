@@ -1,0 +1,42 @@
+# Glue-Based Framework for Counting Insert, Upsert, and MERGE INTO Calls
+
+## Overview
+
+This framework is designed to help you identify the number of calls for insert, upsert, and MERGE INTO operations in your data processing workflows.
+
+You can access the code for this framework on GitHub at the following link: [GitHub Repository](https://github.com/ad1happy2go/hudi-examples/tree/main/glue).
+
+## Process
+
+The process involves three main steps:
+
+### 1. S3 Calls Benchmarking Data Generation
+
+This step is responsible for generating the data required for merge and upsert operations. It's a crucial part of the benchmarking process as it provides the data needed for subsequent analysis.
+
+### 2. S3 Calls Benchmarking Job
+
+In this step, you can execute the code for which benchmarking needs to be conducted. To initiate the benchmarking process, you will need to provide the following information:
+
+- **Table Name:** Specify the table name you want to analyze.
+- **Spark Bundle JAR:** Provide the path to the Spark bundle JAR file you wish to use for benchmarking.
+
+### 3. S3 Calls Benchmarking Code
+
+This code will be
+
+## Usage
+
+1. Clone the GitHub repository: [GitHub Repository](https://github.com/ad1happy2go/hudi-examples).
+
+2. Navigate to the `glue` directory in the repository to access the code for this framework.
+
+3. Follow the instructions in the code to configure and run the benchmarking job. Make sure to provide the required table name and the path to the Spark bundle JAR.
+
+## More Information
+
+For more details and access to the code, please visit the GitHub repository linked above.
+
+Feel free to use this framework to analyze and optimize your data processing workflows involving insert, upsert, and MERGE INTO operations.
+
+If you have any questions or need assistance, please refer to the GitHub repository's documentation or reach out to the repository owner for support.
