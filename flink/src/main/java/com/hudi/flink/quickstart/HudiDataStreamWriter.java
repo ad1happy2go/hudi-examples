@@ -26,10 +26,24 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A Flink program that writes data as a streaming source to Apache Hudi.
+ * This Flink program serves as a demonstration of inserting, updating, and deleting records in a Hudi table using the DataStream API.
+ * The program inserts three messages for ten batches. Two of the messages generate a random UUID, acting as new insert records, while one record reuses the same record key, resulting in an update for that record in each batch.
+ * In the first batch, three new records are inserted into a newly created Hudi table.
+ * Subsequently, after each batch, two new records are inserted, leading to an increment in the count by two with each batch.
+ * In the 11th batch, we illustrate the delete operation by publishing a record with the delete row kind. As a result, we observe the deletion of the third ID after this batch.
+ *
+ * After this code finishes you should see total 20 records in hudi table.
  */
 public class HudiDataStreamWriter {
 
+	/**
+	 * Main Entry point takes two parameters.
+	 * It can be run with Flink cli.
+	 * Sample Command - bin/flink run -c com.hudi.flink.quickstart.HudiDataStreamWriter ${HUDI_EXAMPLES_REPO}//flink/target/hudi-examples-0.1.jar hudi_table "file:///tmp/hudi_table"
+	 *
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		if (args.length < 2) {
 			System.err.println("Usage: HudiDataStreamWriter <targetTable> <basePath>");
@@ -92,13 +106,14 @@ public class HudiDataStreamWriter {
 	 */
 	private static HoodiePipeline.Builder createHudiPipeline(String targetTable, Map<String, String> options) {
 		return HoodiePipeline.builder(targetTable)
-				.column("uuid VARCHAR(20)")
-				.column("name VARCHAR(10)")
-				.column("age INT")
 				.column("ts TIMESTAMP(3)")
-				.column("`partition` VARCHAR(20)")
+				.column("uuid VARCHAR(40)")
+				.column("rider VARCHAR(20)")
+				.column("driver VARCHAR(20)")
+				.column("fare DOUBLE")
+				.column("city VARCHAR(20)")
 				.pk("uuid")
-				.partition("partition")
+				.partition("city")
 				.options(options);
 	}
 
@@ -110,11 +125,12 @@ public class HudiDataStreamWriter {
 		public static BinaryRowData insertRow(Object... fields) {
 
 			DataType ROW_DATA_TYPE = DataTypes.ROW(
-							DataTypes.FIELD("uuid", DataTypes.VARCHAR(20)),// record key
-							DataTypes.FIELD("name", DataTypes.VARCHAR(10)),
-							DataTypes.FIELD("age", DataTypes.INT()),
 							DataTypes.FIELD("ts", DataTypes.TIMESTAMP(3)), // precombine field
-							DataTypes.FIELD("partition", DataTypes.VARCHAR(10)))
+							DataTypes.FIELD("uuid", DataTypes.VARCHAR(40)),// record key
+							DataTypes.FIELD("rider", DataTypes.VARCHAR(20)),
+							DataTypes.FIELD("driver", DataTypes.VARCHAR(20)),
+							DataTypes.FIELD("fare", DataTypes.DOUBLE()),
+							DataTypes.FIELD("city", DataTypes.VARCHAR(20)))
 					.notNull();
 			RowType ROW_TYPE = (RowType) ROW_DATA_TYPE.getLogicalType();
 			LogicalType[] types = ROW_TYPE.getFields().stream().map(RowType.RowField::getType)
@@ -139,21 +155,25 @@ public class HudiDataStreamWriter {
 			int batchNum = 0;
 			while (isRunning) {
 				batchNum ++;
-				// For Every Batch, it adds two new rows with uuid and updates the row with uuid
+				// For Every Batch, it adds two new rows with RANDOM uuid and updates the row with uuid "334e26e9-8355-45cc-97c6-c31daf0df330"
 				List<RowData> DATA_SET_INSERT = Arrays.asList(
-						insertRow(StringData.fromString(UUID.randomUUID().toString()), StringData.fromString("Danny"), 23,
-								TimestampData.fromEpochMillis(1), StringData.fromString("par1")),
-						insertRow(StringData.fromString(UUID.randomUUID().toString()), StringData.fromString("Stephen"), 33,
-								TimestampData.fromEpochMillis(2), StringData.fromString("par1")),
-						insertRow(StringData.fromString("id1"), StringData.fromString("Julian"), 53,
-								TimestampData.fromEpochMillis(3), StringData.fromString("par2"))
+						insertRow(TimestampData.fromEpochMillis(1695159649),
+								StringData.fromString(UUID.randomUUID().toString()), StringData.fromString("rider-A"),
+								StringData.fromString("driver-K"), 19.10, StringData.fromString("san_francisco")),
+						insertRow(TimestampData.fromEpochMillis(1695159649),
+								StringData.fromString(UUID.randomUUID().toString()), StringData.fromString("rider-B"),
+								StringData.fromString("driver-M"), 27.70, StringData.fromString("san_francisco")),
+						insertRow(TimestampData.fromEpochMillis(1695159649),
+								StringData.fromString("334e26e9-8355-45cc-97c6-c31daf0df330"), StringData.fromString("rider-C"),
+								StringData.fromString("driver-L"), 33.90, StringData.fromString("san_francisco"))
 				);
-				if(batchNum != 10) {
+				if(batchNum < 11) {
+					// For first 10 batches, inserting 3 records. 2 with random id (INSERTS) and 1 with hardcoded UUID(UPDATE)
 					for (RowData row : DATA_SET_INSERT) {
 						ctx.collect(row);
 					}
 				}else{
-					// For 10th Batch Delete the row with record key id1
+					// For 11th Batch, inserting only one record with row kind delete.
 					RowData rowToBeDeleted = DATA_SET_INSERT.get(2);
 					rowToBeDeleted.setRowKind(RowKind.DELETE);
 					ctx.collect(rowToBeDeleted);

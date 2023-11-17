@@ -82,13 +82,14 @@ public class HudiDataStreamReader {
      */
     private static HoodiePipeline.Builder createHudiPipeline(String targetTable, Map<String, String> options) {
         return HoodiePipeline.builder(targetTable)
-                .column("uuid VARCHAR(20)")
-                .column("name VARCHAR(10)")
-                .column("age INT")
                 .column("ts TIMESTAMP(3)")
-                .column("`partition` VARCHAR(20)")
+                .column("uuid VARCHAR(40)")
+                .column("rider VARCHAR(20)")
+                .column("driver VARCHAR(20)")
+                .column("fare DOUBLE")
+                .column("city VARCHAR(20)")
                 .pk("uuid")
-                .partition("partition")
+                .partition("city")
                 .options(options);
     }
 
