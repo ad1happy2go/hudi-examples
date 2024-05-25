@@ -79,8 +79,9 @@ TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}
 TestAutomationUtils.compareData(spark, "${basePath}" , batch_id = batch)
 assert(TestAutomationUtils.getCount(spark, "${basePath}") ==  990)
 EOF
-
-OLD_TABLE_VERSION_PROP=$(cat "${basePath}/.hoodie/hoodie.properties" | grep "hoodie.table.version")
+rm hoodie.properties
+aws s3 cp ${basePath}/.hoodie/hoodie.properties .
+OLD_TABLE_VERSION_PROP=$(cat "hoodie.properties" | grep "hoodie.table.version")
 export OLD_TABLE_VERSION="${OLD_TABLE_VERSION_PROP#*=}"
 
 echo "Running Spark shell command to load data and compare for batch 2"
