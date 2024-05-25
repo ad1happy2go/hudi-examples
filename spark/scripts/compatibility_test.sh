@@ -80,7 +80,13 @@ TestAutomationUtils.compareData(spark, "${basePath}" , batch_id = batch)
 assert(TestAutomationUtils.getCount(spark, "${basePath}") ==  990)
 EOF
 rm hoodie.properties
-aws s3 cp ${basePath}/.hoodie/hoodie.properties .
+
+if [[ $basePath == s3a* ]]; then
+    aws s3 cp s3://${basePath#s3a://}/.hoodie/hoodie.properties .
+else
+    cp ${basePath}/.hoodie/hoodie.properties .
+fi
+
 OLD_TABLE_VERSION_PROP=$(cat "hoodie.properties" | grep "hoodie.table.version")
 export OLD_TABLE_VERSION="${OLD_TABLE_VERSION_PROP#*=}"
 
