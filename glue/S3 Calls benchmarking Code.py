@@ -70,9 +70,9 @@ def total_s3_calls(df):
 
 # Find 20 paths with most calls
 def top_paths_with_calls(df):
-    out = df.groupBy("call_type", "path").agg(count(lit(1)).alias("count")).orderBy(col("count").desc())
+    out = df.groupBy("call_type", "path").agg(count(lit(1)).alias("count")).orderBy(col("count").desc()).limit(100)
     out.write.format("com.crealytics.spark.excel") \
-        .option("dataAddress", "'call_type'!B3") \
+        .option("dataAddress", "'top_paths'!B3") \
         .option("useHeader", "true") \
         .mode("append") \
         .save(excel_path)
@@ -125,10 +125,10 @@ def main():
     df = read_s3_logs(spark, access_logs_path, table_name)
 
     print("Total S3 calls by call type")
-    # total_s3_calls(df)
+    total_s3_calls(df)
 
     print("20 Paths with maximum Calls")
-    # top_paths_with_calls(df)
+    top_paths_with_calls(df)
 
     s3 = init_s3_client()
     commit_range = list_s3_objects(s3, hudi_table_bucket_name, hudi_table_base_path)
