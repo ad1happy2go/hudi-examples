@@ -8,8 +8,11 @@ function checkSuccess() {
         echo "Test Success - ${test}"
     fi
 }
+
+
 mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
+spark_version=${SPARK_VERSION}
 test_jar=${JARS_PATH}/${spark_version}/hudi-spark${spark_version}-bundle_2.12-${hudi_version}.jar
 
 
