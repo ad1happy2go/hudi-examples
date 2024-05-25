@@ -1,0 +1,2 @@
+hoodie.metadata.enable=true
+hoodie.datasource.write.table.type=COPY_ON_WRITE

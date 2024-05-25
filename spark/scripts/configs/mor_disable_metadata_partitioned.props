@@ -1,0 +1,3 @@
+hoodie.datasource.write.partitionpath.field=partitionpath
+hoodie.datasource.write.table.type=MERGE_ON_READ
+hoodie.metadata.enable=false
