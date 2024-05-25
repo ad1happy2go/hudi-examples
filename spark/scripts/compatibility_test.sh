@@ -37,8 +37,8 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-source utils.sh
+pwd
+source ./utils.sh
 epoch=`date +%s`
 current_date=$(date +%Y%m%d)
 tableName=table_comp_test_${from_version//./_}_${to_version//./_}_${epoch}
