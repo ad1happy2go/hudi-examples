@@ -13,10 +13,8 @@ function checkSuccess() {
 mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
 spark_version=${SPARK_VERSION}
-test_jar=${JARS_PATH}/${spark_version}/hudi-spark${spark_version}-bundle_2.12-${hudi_version}.jar
-
-
 test_version=${HUDI_VERSION}
+test_jar=${JARS_PATH}/${spark_version}/hudi-spark${spark_version}-bundle_2.12-${hudi_version}.jar
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
 versions_to_check=("0.14.1" "0.14.0" "0.13.1" "0.13.0" "0.12.3")
