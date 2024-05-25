@@ -8,10 +8,12 @@ function checkSuccess() {
         echo "Test Success - ${test}"
     fi
 }
-
+mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
 export SPARK_HOME=/Users/adityagoenka/spark/spark-3.2.3-bin-hadoop3.2
 export JAR_PATH=/Users/adityagoenka/docker_demo/artifacts/jars/0.15.0-rc1/3.2/hudi-spark3.2-bundle_2.12-0.15.0-rc1.jar
+
+
 test_version="0.15.0-rc1"
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 versions_to_check=("0.14.1" "0.14.0" "0.13.1" "0.13.0" "0.12.3")
@@ -25,7 +27,7 @@ function runCompatibilityTest() {
 
     local test_name="${test}_${formatted_from_version}_${formatted_test_version}"
     echo "Testing ${test} - ${from_version} <> ${test_version}" >> "${result_file}"
-    sh compatibility_test.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}.log"
+    sh compatibility_test.sh -j "${JAR_PATH}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}.log"
     checkSuccess "${test_name}" >> "${result_file}"
 }
 
