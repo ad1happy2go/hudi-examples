@@ -2,9 +2,9 @@
 
 # Initialize default values
 localOrS3="local"
-to_version="0.14.0"
+to_version=${HUDI_VERSION}
 from_version="0.13.0"
-spark_version="3.2"
+spark_version=${SPARK_VERSION}
 test_jar=""
 conf=""
 
@@ -13,6 +13,10 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         -m|--localOrS3)
             localOrS3="$2"
+            shift 2
+            ;;
+        -sv|--spark_version)
+            spark_version="$2"
             shift 2
             ;;
         -tv|--to_version)
