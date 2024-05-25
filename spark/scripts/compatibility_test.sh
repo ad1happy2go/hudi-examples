@@ -153,7 +153,13 @@ TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}
 EOF
 
 echo "Forcing Rollback by Deleteing the latest .commit file"
-latest_file=$(ls -t ${basePath}/.hoodie/*commit | head -n 1)
+if [[ $basePath == s3a* ]]; then
+    latest_file=$(aws s3 ls s3://${basePath#s3a://}.hoodie/ --human-readable --summarize | sort -k1,1 -k2,2r | grep -E "commit$" | head -n 1 | awk '{print $NF}')
+else
+    latest_file=$(ls -t ${basePath}/.hoodie/*commit | head -n 1)
+fi
+
+
 rm -f "$latest_file"
 
 echo "Running Spark shell command to load data and compare for batch 4"
