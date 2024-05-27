@@ -120,15 +120,15 @@ echo "${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
 --jars ${test_jar} << EOF"
 echo ":load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala"
-
-echo "TestAutomationUtils.downgradeTable(spark, \"${basePath}\", ${OLD_TABLE_VERSION})"
+echo ":load ../src/main/scala/com/hudi/spark/DowngradeTable.scala"
+echo "DowngradeTable.downgradeTable(spark, \"${basePath}\", ${OLD_TABLE_VERSION})"
 echo "EOF"
 
 ${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
 --jars ${test_jar} << EOF
-:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
-TestAutomationUtils.downgradeTable(spark, "${basePath}", ${OLD_TABLE_VERSION})
+:load ../src/main/scala/com/hudi/spark/DowngradeTable.scala
+DowngradeTable.downgradeTable(spark, "${basePath}", ${OLD_TABLE_VERSION})
 EOF
 
 echo "Running Spark shell command to load data and compare for batch 3"

@@ -1,7 +1,6 @@
 import org.apache.hudi.QuickstartUtils._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
-
 import scala.collection.JavaConversions._
 import scala.io.Source
 import org.apache.log4j.Logger
@@ -63,7 +62,7 @@ object TestAutomationUtils {
     val expectedUpdates = spark.read.format("parquet").load(basePath + "_parquet_" + batch_id + UPDATE_MODE).selectExpr(cols:_*)
     val expectedDeletes = spark.read.format("parquet").load(basePath + "_parquet_" + batch_id + DELETE_MODE).selectExpr(cols:_*)
     val actualDF = outputDF.where(f"batch_id = '${batch_id}'")
-    assert(actualDF.where(f"mode = '${INSERT_MODE}'").except(expectedInserts.select()).count() == 0)
+    assert(actualDF.where(f"mode = '${INSERT_MODE}'").except(expectedInserts).count() == 0)
     assert(expectedDeletes.intersect(actualDF).count() == 0)
 
     assert(expectedOutput.except(outputDF).count() == 0)
@@ -118,23 +117,6 @@ object TestAutomationUtils {
       configMap.put(key.trim, value.trim)
     }
     configMap.toMap
-  }
-
-  def validateFromAndToVersion(toVersion: HoodieTableVersion, fromVersion: HoodieTableVersion): Unit = {
-    if (toVersion.compareTo(fromVersion) >= 0) throw new IllegalArgumentException("Hudi table can not be downgraded from " + fromVersion + " to version " + toVersion)
-  }
-
-  def downgradeTable(spark: SparkSession, basePath: String, toVersion: Int) = {
-    val jsc = JavaSparkContext.fromSparkContext(spark.sparkContext)
-    val hoodieEngineContext = new HoodieSparkEngineContext(jsc)
-    val metaClient = HoodieTableMetaClient.builder.setConf(spark.sparkContext.hadoopConfiguration).setBasePath(basePath).build
-    val fromVersion = metaClient.getTableConfig.getTableVersion
-    validateFromAndToVersion(HoodieTableVersion.versionFromCode(toVersion), fromVersion)
-    val writeConf = HoodieWriteConfig.newBuilder.withProps(metaClient.getTableConfig.getProps).withPath(basePath).build
-    new UpgradeDowngrade(metaClient, writeConf, hoodieEngineContext, SparkUpgradeDowngradeHelper.getInstance).run(HoodieTableVersion.versionFromCode(toVersion), null)
-    val newMetaClient = HoodieTableMetaClient.builder.setConf(spark.sparkContext.hadoopConfiguration).setBasePath(basePath).build
-    val newVersion = newMetaClient.getTableConfig.getTableVersion
-    println(newVersion)
   }
 
 }
