@@ -1,8 +1,11 @@
 #!/bin/bash
 
-function checkSuccess() {
+checkSuccess() {
     local test=$1
-    if grep -q -e "AssertionError" -e "Exception" "logs/${test}.log" && ! grep -q "SASupportException" "logs/${test}.log"; then
+    if grep -q "AssertionError" "logs/${test}.log"; then
+        echo "Test Failed - ${test}"
+        return 1  # Indicate failure
+    elif grep -q -e "Exception" "logs/${test}.log" && ! grep -q "SASupportException" "logs/${test}.log"; then
         echo "Test Failed - ${test}"
         return 1  # Indicate failure
     else
@@ -10,7 +13,6 @@ function checkSuccess() {
         return 0  # Indicate success
     fi
 }
-
 
 
 mkdir -p logs

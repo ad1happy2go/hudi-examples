@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Initialize default values
-localOrS3="s3"
+localOrS3="local"
 to_version=${HUDI_VERSION}
 from_version="0.13.0"
 spark_version=${SPARK_VERSION}
