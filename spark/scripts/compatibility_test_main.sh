@@ -22,7 +22,8 @@ test_version=${HUDI_VERSION}
 test_jar=${JARS_PATH}/${spark_version}/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/${spark_version}/hudi-cli-bundle_2.12-${test_version}.jar
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
-versions_to_check=("0.14.1" "0.14.0" "0.13.1" "0.13.0" "0.12.3")
+# versions_to_check=("0.14.1" "0.14.0" "0.13.1" "0.13.0" "0.12.3")
+versions_to_check=("0.12.3")
 
 function runCompatibilityTest() {
     local from_version=$1

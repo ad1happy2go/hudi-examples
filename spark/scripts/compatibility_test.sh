@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Initialize default values
-localOrS3="local"
+localOrS3="s3"
 to_version=${HUDI_VERSION}
 from_version="0.13.0"
 spark_version=${SPARK_VERSION}
@@ -45,7 +45,7 @@ pwd
 source ./utils.sh
 epoch=`date +%s`
 current_date=$(date +%Y%m%d)
-tableName=table_comp_test_${from_version//./_}_${to_version//./_}_${epoch}
+tableName="table_comp_test_$(echo ${from_version//./_}_${to_version//./_}_${epoch} | sed 's/-rc1/_rc1/')"
 
 if [ $localOrS3 == "s3" ]; then
     basePath="s3a://performance-benchmark-datasets-us-west-2/temporary_output/${current_date}/${tableName}"
