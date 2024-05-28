@@ -70,7 +70,7 @@ echo "TestAutomationUtils.compareData(spark, \"${basePath}\" , batch_id = batch)
 echo "assert(TestAutomationUtils.getCount(spark, \"${basePath}\") ==  990)"
 echo "EOF"
 
-${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
+${SPARK_HOME}/bin/spark-shell --master yarn --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.hadoop.spark.sql.legacy.parquet.nanosAsLong=false'  --conf 'spark.hadoop.spark.sql.parquet.binaryAsString=false' --conf 'spark.hadoop.spark.sql.parquet.int96AsTimestamp=true' --conf 'spark.hadoop.spark.sql.caseSensitive=false'  \
 --packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
 :load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
@@ -102,7 +102,7 @@ echo "assert(TestAutomationUtils.getCount(spark, \"${basePath}\") ==  1980)"
 echo "TestAutomationUtils.compareData(spark, \"${basePath}\" , batch_id = batch)"
 echo "EOF"
 
-${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
+${SPARK_HOME}/bin/spark-shell --master yarn --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar' --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
 --jars ${test_jar} << EOF
 :load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
@@ -124,7 +124,7 @@ echo ":load ../src/main/scala/com/hudi/spark/DowngradeTable.scala"
 echo "DowngradeTable.downgradeTable(spark, \"${basePath}\", ${OLD_TABLE_VERSION})"
 echo "EOF"
 
-${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
+${SPARK_HOME}/bin/spark-shell --master yarn --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar' --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
 --jars ${test_jar} << EOF
 :load ../src/main/scala/com/hudi/spark/DowngradeTable.scala
@@ -142,7 +142,7 @@ echo "val batch=\"3\""
 echo "TestAutomationUtils.loadData(spark, \"${basePath}\" ,\"${tableName}\", conf=\"${conf}\", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0)"
 echo "EOF"
 
-${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
+${SPARK_HOME}/bin/spark-shell --master yarn --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.hadoop.spark.sql.legacy.parquet.nanosAsLong=false'  --conf 'spark.hadoop.spark.sql.parquet.binaryAsString=false' --conf 'spark.hadoop.spark.sql.parquet.int96AsTimestamp=true' --conf 'spark.hadoop.spark.sql.caseSensitive=false'  \
 --packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
 :load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
@@ -174,7 +174,7 @@ echo "TestAutomationUtils.compareData(spark, \"${basePath}\" , batch_id = batch)
 echo "assert(TestAutomationUtils.getCount(spark, \"${basePath}\") ==  3970)"
 echo "EOF"
 
-${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
+${SPARK_HOME}/bin/spark-shell --master yarn --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.hadoop.spark.sql.legacy.parquet.nanosAsLong=false'  --conf 'spark.hadoop.spark.sql.parquet.binaryAsString=false' --conf 'spark.hadoop.spark.sql.parquet.int96AsTimestamp=true' --conf 'spark.hadoop.spark.sql.caseSensitive=false'  \
 --packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
 :load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
@@ -200,7 +200,7 @@ echo "assert(TestAutomationUtils.getCount(spark, \"${basePath}\") ==  4960)"
 echo "TestAutomationUtils.compareData(spark, \"${basePath}\" ,\"5\")"
 echo "EOF"
 
-${SPARK_HOME}/bin/spark-shell --driver-memory 8g \
+${SPARK_HOME}/bin/spark-shell --master yarn --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar' --driver-memory 8g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
 --jars ${test_jar} << EOF
 :load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
