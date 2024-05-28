@@ -40,9 +40,11 @@ dbName=db_sql_test_${epoch}
 tableName=table_sql_test_${epoch}
 
 if [ $localOrS3 == "s3" ]; then
-    basePath="s3a://<test_bucket>/output/${current_date}/${tableName}"
+    basePath="s3a://performance-benchmark-datasets-us-west-2/temporary_output/${current_date}/${tableName}"
+    MASTER="yarn"
 else
     basePath="/tmp/output/${current_date}/${tableName}"
+    MASTER="local"
 fi
 
 echo "SPARK DIR USED - ${SPARK_HOME}"
@@ -61,10 +63,10 @@ local part=$2
 local params=$3
 echo props=${part}
 echo props=${params}
-${SPARK_HOME}/bin/spark-sql \
+${SPARK_HOME}/bin/spark-sql --master ${MASTER} \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.hadoop.spark.sql.legacy.parquet.nanosAsLong=false'  --conf 'spark.hadoop.spark.sql.parquet.binaryAsString=false' --conf 'spark.hadoop.spark.sql.parquet.int96AsTimestamp=true' --conf 'spark.hadoop.spark.sql.caseSensitive=false'  \
---jars ${test_jar} \
--i ../sql/quickstart.sql --hivevar partition="${part}" --hivevar props="${params}"  > logs/${test}.log 2> logs/error_logs.txt
+${jar_conf} \
+-i ../sql/quickstart.sql --hivevar partition="${part}" --hivevar props="${params}" --hivevar path="${basePath}"  > logs/${test}.log 2> logs/error_logs.txt
 }
 
 test_name="mor_partitioned_record_key"
