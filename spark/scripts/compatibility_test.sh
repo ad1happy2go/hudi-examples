@@ -154,8 +154,8 @@ EOF
 
 echo "Forcing Rollback by Deleteing the latest .commit file"
 if [[ $basePath == s3a* ]]; then
-    latest_file=$(aws s3 ls s3://${basePath#s3a://}.hoodie/ --human-readable --summarize | sort -k1,1 -k2,2r | grep -E "commit$" | head -n 1 | awk '{print $NF}')
-    aws s3 rm s3://${latest_file#s3a://}
+    latest_file=$(aws s3 ls s3://${basePath#s3a://}/.hoodie/ --human-readable --summarize | sort -k1,1 -k2,2r | grep -E "commit$" | head -n 1 | awk '{print $NF}')
+    aws s3 rm s3://${basePath#s3a://}/.hoodie/${latest_file}
 else
     latest_file=$(ls -t ${basePath}/.hoodie/*commit | head -n 1)
     rm -f "$latest_file"
