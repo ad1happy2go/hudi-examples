@@ -65,7 +65,7 @@ WHEN NOT MATCHED THEN INSERT *
 SELECT 'After MERGE, Check count of the table. It should return 10. 2 Of them were updates.';
 SELECT COUNT(1) FROM hudi_table;
 
-SELECT 'DELETING one of the record. Count after that should return 9';
+SELECT 'DELETING one of the record. Count after that should return 0';
 DELETE FROM hudi_table WHERE uuid = '3f3d9565-7261-40e6-9b39-b8aa784f95e2';
 
 SELECT COUNT(1) FROM hudi_table WHERE uuid = '3f3d9565-7261-40e6-9b39-b8aa784f95e2';
@@ -90,7 +90,7 @@ CREATE TABLE hudi_table_ctas
 ${partition}
 tblproperties (
 ${props}
-) AS SELECT ts, uuid, rider, driver, fare, city  FROM hudi_table;
+)  location '${path}/hudi_table_ctas' AS SELECT ts, uuid, rider, driver, fare, city  FROM hudi_table;
 
 SELECT COUNT(1) FROM hudi_table_ctas;
 
