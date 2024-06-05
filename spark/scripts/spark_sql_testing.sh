@@ -3,8 +3,8 @@
 # Initialize default values
 localOrS3="local"
 version="jar"
-spark_version="3.2"
-test_jar="/Users/adityagoenka/jars/0.14.1-SNAPSHOT/hudi-spark3.2-bundle_2.12-0.14.0.jar"
+spark_version="3.4"
+test_jar="s3a://performance-benchmark-datasets-us-west-2/jars/release_testing_jars/0.15.0-rc1/3.4/hudi-utilities-bundle_2.12-0.15.0-rc1.jar"
 conf=""
 
 # Parse command line arguments
@@ -16,6 +16,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -v|--version)
             version="$2"
+            shift 2
+            ;;
+        -hv|--hudiVersion)
+            from_version="$2"
             shift 2
             ;;
         -j|--jar)
@@ -35,14 +39,15 @@ done
 
 source utils.sh
 epoch=`date +%s`
-current_date=$(date +%Y%m%d)
+current_date=$(date +%Y%m%d%H%M)
 dbName=db_sql_test_${epoch}
-tableName=table_sql_test_${epoch}
 
 if [ $localOrS3 == "s3" ]; then
-    basePath="s3a://<test_bucket>/output/${current_date}/${tableName}"
+    basePathFolder="s3a://performance-benchmark-datasets-us-west-2/temporary_output/${current_date}"
+    MASTER="yarn"
 else
-    basePath="/tmp/output/${current_date}/${tableName}"
+    basePathFolder="/tmp/output/${current_date}"
+    MASTER="local"
 fi
 
 echo "SPARK DIR USED - ${SPARK_HOME}"
@@ -61,40 +66,44 @@ local part=$2
 local params=$3
 echo props=${part}
 echo props=${params}
-${SPARK_HOME}/bin/spark-sql \
---conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.hadoop.spark.sql.legacy.parquet.nanosAsLong=false'  --conf 'spark.hadoop.spark.sql.parquet.binaryAsString=false' --conf 'spark.hadoop.spark.sql.parquet.int96AsTimestamp=true' --conf 'spark.hadoop.spark.sql.caseSensitive=false'  \
---jars ${test_jar} \
--i ../sql/quickstart.sql --hivevar partition="${part}" --hivevar props="${params}"  > logs/${test}.log 2> logs/error_logs.txt
+epoch=`date +%s`
+tableName=table_sql_test_${epoch}
+basePath=$basePathFolder/${tableName}
+${SPARK_HOME}/bin/spark-sql --master ${MASTER} \
+--conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar' --conf 'spark.hadoop.spark.sql.legacy.parquet.nanosAsLong=false'  --conf 'spark.hadoop.spark.sql.parquet.binaryAsString=false' --conf 'spark.hadoop.spark.sql.parquet.int96AsTimestamp=true' --conf 'spark.hadoop.spark.sql.caseSensitive=false'  \
+${jar_conf} \
+-i ../sql/quickstart.sql --hivevar partition="${part}" --hivevar props="${params}" --hivevar path="${basePath}"  > logs/${test}.log 2>> logs/error_logs.txt
 }
 
+MDT_ENABLED=false
 test_name="mor_partitioned_record_key"
 echo "Testing mor Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" "type = 'mor', primaryKey = 'uuid', preCombineField = 'ts'"
+runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" "type = 'mor', primaryKey = 'uuid', preCombineField = 'ts', hoodie.metadata.enable = '$MDT_ENABLED'"
 
 test_name="mor_non_partitioned_record_key"
 echo "Testing mor Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI" "type = 'mor', primaryKey = 'uuid', preCombineField = 'ts'"
+runSQLQuickstart $test_name "USING HUDI" "type = 'mor', primaryKey = 'uuid', preCombineField = 'ts', hoodie.metadata.enable = '$MDT_ENABLED'"
 
 test_name="mor_non_partitioned_pkless"
 echo "Testing mor Table Without Partition Key and without Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI" " type = 'mor'"
+runSQLQuickstart $test_name "USING HUDI" " type = 'mor', hoodie.metadata.enable = '$MDT_ENABLED'"
 
 test_name="mor_partitioned_pkless"
 echo "Testing mor Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" " type = 'mor'"
+runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" " type = 'mor', hoodie.metadata.enable = '$MDT_ENABLED'"
 test_name="cow_partitioned_record_key"
 echo "Testing COW Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" "type = 'cow', primaryKey = 'uuid', preCombineField = 'ts'"
+runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" "type = 'cow', primaryKey = 'uuid', preCombineField = 'ts', hoodie.metadata.enable = '$MDT_ENABLED'"
 
 test_name="cow_non_partitioned_record_key"
 echo "Testing COW Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI" "type = 'cow', primaryKey = 'uuid', preCombineField = 'ts'"
+runSQLQuickstart $test_name "USING HUDI" "type = 'cow', primaryKey = 'uuid', preCombineField = 'ts', hoodie.metadata.enable = '$MDT_ENABLED'"
 
 test_name="cow_non_partitioned_pkless"
 echo "Testing COW Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI" " type = 'cow'"
+runSQLQuickstart $test_name "USING HUDI" " type = 'cow', hoodie.metadata.enable = '$MDT_ENABLED'"
 
 test_name="cow_partitioned_pkless"
 echo "Testing COW Table With Partition Key and Record Key. Output at logs/${test_name}.log"
-runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" " type = 'cow'"
+runSQLQuickstart $test_name "USING HUDI PARTITIONED BY (city)" " type = 'cow', hoodie.metadata.enable = '$MDT_ENABLED'"
 
