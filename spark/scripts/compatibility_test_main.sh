@@ -19,11 +19,11 @@ mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
 spark_version=${SPARK_VERSION}
 test_version=${HUDI_VERSION}
-test_jar=${JARS_PATH}/${spark_version}/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/${spark_version}/hudi-cli-bundle_2.12-${test_version}.jar
+test_jar="/Users/sagars/hudi/packaging/hudi-spark-bundle/target/hudi-spark3.5-bundle_2.12-1.0.0-SNAPSHOT.jar,/Users/sagars/hudi/packaging/hudi-spark-bundle/target/hudi-spark3.5-bundle_2.12-1.0.0-SNAPSHOT.jar,/Users/sagars/hudi/packaging/hudi-cli-bundle/target/hudi-cli-bundle_2.12-1.0.0-SNAPSHOT.jar"
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
 # versions_to_check=("0.14.1" "0.14.0" "0.13.1" "0.13.0" "0.12.3")
-versions_to_check=("0.12.3")
+versions_to_check=("0.15.0")
 
 function runCompatibilityTest() {
     local from_version=$1
