@@ -19,6 +19,7 @@ checkSuccess() {
 
 SPARK_VERSION=3.4
 HUDI_VERSION=1.0.0-SNAPSHOT
+# Change jar path, the jars should be placed at ${JARS_PATH}/${spark_version}
 JARS_PATH=/Users/adityagoenka/jars/1.0.0-SNAPSHOT/siva_0512
 mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
@@ -27,6 +28,7 @@ test_version=${HUDI_VERSION}
 test_jar=${JARS_PATH}/${spark_version}/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/${spark_version}/hudi-cli-bundle_2.12-${test_version}.jar
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
+# List of from versions we want to run compatibility tests on
 # versions_to_check=("0.14.1" "0.14.0" "0.15.0")
 versions_to_check=("0.15.0")
 
@@ -40,11 +42,12 @@ function runCompatibilityTest() {
     local test_name="${test}_${formatted_from_version}_${formatted_test_version}"
     echo "Testing ${test} - ${from_version} <> ${test_version}" >> "${result_file}"
     sh compatibility_test.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}.log"
-    sh compatibility_test_longrunning.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}_longrunning.log"
+    # Enable this if we want to run long running tests
+    # sh compatibility_test_longrunning.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}_longrunning.log"
     checkSuccess "${test_name}" >> "${result_file}"
 }
 
-
+# Create properties file for each test case
 for from_version in "${versions_to_check[@]}"; do
 #    runCompatibilityTest "${from_version}" "cow_enable_metadata_nonpartitioned"
 #    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned"
