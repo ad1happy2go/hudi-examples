@@ -47,7 +47,7 @@ function runCompatibilityTest() {
     checkSuccess "${test_name}" >> "${result_file}"
 }
 
-# Create properties file for each test case
+# Create properties file for each test case. The name of properties file should end with .props
 for from_version in "${versions_to_check[@]}"; do
 #    runCompatibilityTest "${from_version}" "cow_enable_metadata_nonpartitioned"
 #    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned"
