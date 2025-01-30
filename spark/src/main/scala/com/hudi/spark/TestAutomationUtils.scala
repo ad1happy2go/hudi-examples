@@ -24,9 +24,13 @@ object TestAutomationUtils {
   val DELETE_MODE="DELETE"
   val UPDATE_MODE="UPDATE"
 
-  def loadData(spark: SparkSession,basePath:String, tableName: String, s3OrLocal: String = "local", batch_id:String = "0" , numInserts: Int = 100, numUpdates: Int = 0, numDeletes: Int = 0, conf: String = "") {
+  def loadData(spark: SparkSession,basePath:String, tableName: String, s3OrLocal: String = "local", batch_id:String = "0" , numInserts: Int = 100, numUpdates: Int = 0, numDeletes: Int = 0, conf: String = "", upgrade:String = "") {
     val dataGen = new DataGenerator
-    val configs = getConfigs(tableName) ++ readConfigs(conf)
+    var configs = getConfigs(tableName) ++ readConfigs(conf)
+    if(upgrade == "true"){
+      configs = configs.updated("hoodie.write.auto.upgrade", "true")
+    }
+    println(configs)
     val inserts = convertToStringList(dataGen.generateInserts(numInserts))
     val df = spark.read.json(spark.sparkContext.parallelize(inserts, (numInserts / 100).toInt)).withColumn("batch_id", lit(batch_id)).withColumn("mode", lit(INSERT_MODE))
     df.write.format("hudi").options(configs).mode("append").save(basePath)
@@ -50,6 +54,29 @@ object TestAutomationUtils {
     spark.read.format("hudi").load(basePath).drop(HOODIE_META_COLUMNS.toList:_*).write.format("parquet").save(basePath + "_parquet_" + batch_id)
   }
 
+  def loadDataWithoutValidations(spark: SparkSession,basePath:String, tableName: String, s3OrLocal: String = "local", batch_id:String = "0" , numInserts: Int = 100, numUpdates: Int = 0, numDeletes: Int = 0, conf: String = "", numBatches: Int = 1) {
+    val dataGen = new DataGenerator
+    val configs = getConfigs(tableName) ++ readConfigs(conf)
+    for( w <- 0 to numBatches){
+    val inserts = convertToStringList(dataGen.generateInserts(numInserts))
+    val df = spark.read.json(spark.sparkContext.parallelize(inserts, (numInserts / 100).toInt)).withColumn("batch_id", lit(batch_id)).withColumn("mode", lit(INSERT_MODE))
+    if (numUpdates > 0) {
+      val updates = convertToStringList(dataGen.generateUpdates(numUpdates))
+      val df_updates = spark.read.json(spark.sparkContext.parallelize(updates, (numUpdates / 100).toInt)).withColumn("batch_id", lit(batch_id)).withColumn("mode", lit(UPDATE_MODE))
+      df.union(df_updates).write.format("hudi").options(configs).mode("append").save(basePath)
+    }else{
+      df.write.format("hudi").options(configs).mode("append").save(basePath)
+    }
+    if (numDeletes > 0) {
+      val deletes = convertToStringList(dataGen.generateUpdates(numDeletes))
+      val df = spark.read.json(spark.sparkContext.parallelize(deletes, (numUpdates / 100).toInt)).withColumn("batch_id", lit(batch_id)).withColumn("mode", lit(DELETE_MODE))
+      df.write.format("hudi").options(configs).option("hoodie.datasource.write.operation","delete").mode("append").save(basePath)
+    }
+    }
+    // Saving state of table after this batch
+    spark.read.format("hudi").load(basePath).drop(HOODIE_META_COLUMNS.toList:_*).write.format("parquet").save(basePath + "_parquet_" + batch_id)
+  }
+
   def getCountByBatch(spark: SparkSession, basePath:String):Map[Int, Int] = {
     spark.read.format("hudi").load(basePath).groupBy("batch_id","mode").agg(count(lit(1))).collect().map(x => (x(0).toString.toInt,x(1).toString.toInt)).toMap[Int,Int]
   }
@@ -66,6 +93,14 @@ object TestAutomationUtils {
     assert(expectedDeletes.intersect(actualDF).count() == 0)
 
     assert(expectedOutput.except(outputDF).count() == 0)
+    assert(outputDF.except(expectedOutput).count() == 0)
+  }
+
+
+  def compareDataWithoutValidations(spark: SparkSession, basePath:String, batch_id:String) = {
+    val outputDF = spark.read.format("hudi").load(basePath).drop(HOODIE_META_COLUMNS.toList:_*)
+    val cols = outputDF.columns.toList
+    val expectedOutput = spark.read.format("parquet").load(basePath + "_parquet_" + batch_id).selectExpr(cols:_*)
     assert(outputDF.except(expectedOutput).count() == 0)
   }
 
@@ -94,7 +129,13 @@ object TestAutomationUtils {
       "hoodie.datasource.write.precombine.field " -> "ts",
       "hoodie.datasource.write.hive_style_partitioning" -> "true",
       "hoodie.table.name" -> tableName,
-      "hoodie.parquet.compression.codec" -> "snappy"
+      "hoodie.parquet.compression.codec" -> "snappy",
+      "hoodie.keep.min.commits" -> "10",
+      "hoodie.keep.max.commits" -> "15",
+      "hoodie.cleaner.commits.retained" -> "8",
+      "hoodie.clustering.inline" -> "false",
+      "hoodie.clustering.inline.max.commits" -> "6",
+      "hoodie.compact.inline.max.delta.commits" -> "1"
     )
   }
 

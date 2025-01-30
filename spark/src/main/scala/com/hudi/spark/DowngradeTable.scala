@@ -30,9 +30,9 @@ object DowngradeTable{
     val hoodieEngineContext = new HoodieSparkEngineContext(jsc)
     val metaClient = HoodieTableMetaClient.builder.setConf(conf).setBasePath(basePath).build
     val fromVersion = metaClient.getTableConfig.getTableVersion
-    if(validateFromAndToVersion(HoodieTableVersion.versionFromCode(toVersion), fromVersion)) {
+    if(validateFromAndToVersion(HoodieTableVersion.fromVersionCode(toVersion), fromVersion)) {
       val writeConf = HoodieWriteConfig.newBuilder.withProps(metaClient.getTableConfig.getProps).withPath(basePath).build
-      new UpgradeDowngrade(metaClient, writeConf, hoodieEngineContext, SparkUpgradeDowngradeHelper.getInstance).run(HoodieTableVersion.versionFromCode(toVersion), null)
+      new UpgradeDowngrade(metaClient, writeConf, hoodieEngineContext, SparkUpgradeDowngradeHelper.getInstance).run(HoodieTableVersion.fromVersionCode(toVersion), null)
       val newMetaClient = HoodieTableMetaClient.builder.setConf(conf).setBasePath(basePath).build
       val newVersion = newMetaClient.getTableConfig.getTableVersion
       println(newVersion)

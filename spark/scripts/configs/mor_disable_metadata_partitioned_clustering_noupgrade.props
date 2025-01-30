@@ -1,0 +1,7 @@
+hoodie.metadata.enable=false
+hoodie.datasource.write.table.type=MERGE_ON_READ
+hoodie.datasource.write.partitionpath.field=partitionpath
+hoodie.clustering.inline=true
+hoodie.compact.inline=true
+hoodie.write.auto.upgrade=false
+
