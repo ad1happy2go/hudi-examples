@@ -3,8 +3,8 @@
 # Initialize default values
 localOrS3="local"
 to_version=${HUDI_VERSION}
-from_version="0.14.1"
-spark_version="3.4"
+from_version="0.15.0"
+spark_version="3.5"
 test_jar=""
 conf=""
 master="local[*]"
@@ -88,6 +88,8 @@ fi
 
 OLD_TABLE_VERSION_PROP=$(cat "hoodie.properties" | grep "hoodie.table.version")
 export OLD_TABLE_VERSION="${OLD_TABLE_VERSION_PROP#*=}"
+
+cat ${basePath}/.hoodie/hoodie.properties
 
 echo "Running Spark shell command to load data and compare for batch 2"
 

@@ -17,10 +17,10 @@ checkSuccess() {
 }
 
 
-SPARK_VERSION=3.4
-HUDI_VERSION=1.0.0-SNAPSHOT
+SPARK_VERSION=3.5
+HUDI_VERSION=1.1.0-SNAPSHOT
 # Change jar path, the jars should be placed at ${JARS_PATH}/${spark_version}
-JARS_PATH=/Users/adityagoenka/jars/1.0.0-SNAPSHOT/siva_0512
+JARS_PATH=/Users/sagars/hudi_compat/jars/
 mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
 spark_version=${SPARK_VERSION}
@@ -41,7 +41,7 @@ function runCompatibilityTest() {
 
     local test_name="${test}_${formatted_from_version}_${formatted_test_version}"
     echo "Testing ${test} - ${from_version} <> ${test_version}" >> "${result_file}"
-    sh compatibility_test.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}.log"
+    sh compatibility_test.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs_lock/${test}.props > "logs_lock_mor/${test_name}.log"
     # Enable this if we want to run long running tests
     # sh compatibility_test_longrunning.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}_longrunning.log"
     checkSuccess "${test_name}" >> "${result_file}"
@@ -56,7 +56,7 @@ for from_version in "${versions_to_check[@]}"; do
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned_defaultpayload"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned_clustering"
-    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_clustering"
+#    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_clustering"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned_defaultpayload_clustering"
 #    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_defaultpayload_clustering"
 #    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_clustering_noupgrade"
@@ -64,5 +64,5 @@ for from_version in "${versions_to_check[@]}"; do
 #    runCompatibilityTest "${from_version}" "cow_enable_metadata_partitioned_noupgrade"
 #    runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_noupgrade"
 #    runCompatibilityTest "${from_version}" "mor_enable_metadata_non_partitioned_noupgrade"
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_noupgrade"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_noupgrade2"
 done
