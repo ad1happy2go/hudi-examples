@@ -53,7 +53,7 @@ object TestAutomationUtils {
         .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
         .setBasePath(basePath)
         .build
-      if (!HoodieTableMetaClient.builder
+      if (metaClient.getTableConfig.isMetadataTableAvailable && !HoodieTableMetaClient.builder
         .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
         .setBasePath(metaClient.getMetaPath.toString + "/metadata")
         .build.getActiveTimeline.lastInstant().get().getAction.equals(HoodieTimeline.COMMIT_ACTION)) {
