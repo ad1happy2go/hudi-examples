@@ -40,7 +40,7 @@ function runCompatibilityTest() {
 
     local test_name="${test}_${formatted_from_version}_${formatted_test_version}"
     echo "Testing ${test} - ${from_version} <> ${test_version}" >> "${result_file}"
-    sh compatibility_test.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs_lock/${test}.props > "logs/${test_name}.log"
+    sh compatibility_test.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs_lock/${test}.props > "logs/${test_name}.log" 2>&1
     # Enable this if we want to run long running tests
     # sh compatibility_test_longrunning.sh -j "${test_jar}" -tv "${test_version}" -fv "${from_version}" -c configs/${test}.props > "logs/${test_name}_longrunning.log"
     checkSuccess "${test_name}" >> "${result_file}"
