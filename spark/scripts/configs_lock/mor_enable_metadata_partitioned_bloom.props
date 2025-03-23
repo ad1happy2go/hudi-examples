@@ -6,3 +6,4 @@ hoodie.write.lock.provider=org.apache.hudi.client.transaction.lock.InProcessLock
 hoodie.datasource.write.payload.class=org.apache.hudi.common.model.DefaultHoodieRecordPayload
 hoodie.clustering.inline.max.commits=3
 hoodie.clustering.inline=true
+hoodie.index.type=BLOOM
