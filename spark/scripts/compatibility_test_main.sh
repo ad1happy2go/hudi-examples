@@ -16,15 +16,15 @@ checkSuccess() {
 }
 
 
-SPARK_VERSION=3.5
+SPARK_VERSION=3.4
 HUDI_VERSION=1.1.0-SNAPSHOT
 # Change jar path, the jars should be placed at ${JARS_PATH}/${spark_version}
-JARS_PATH=/Users/ljain/codebase/apache/hudi
+JARS_PATH=/Users/ljain/codebase/jars
 mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
 spark_version=${SPARK_VERSION}
 test_version=${HUDI_VERSION}
-test_jar=${JARS_PATH}/packaging/hudi-spark-bundle/target/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/packaging/hudi-cli-bundle/target/hudi-cli-bundle_2.12-${test_version}.jar
+test_jar=${JARS_PATH}/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/hudi-cli-bundle_2.12-${test_version}.jar
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
 # List of from versions we want to run compatibility tests on
@@ -53,27 +53,33 @@ function runCompatibilityTest() {
 
 # Create properties file for each test case. The name of properties file should end with .props
 for from_version in "${versions_to_check[@]}"; do
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom_noupgrade"
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom_noupgrade"
-#
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom_noupgrade"
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom_noupgrade"
-#
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom_noupgrade"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom_noupgrade"
+
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom_noupgrade"
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom_noupgrade"
+
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned"
 
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli"
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli_noupgrade"
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli_noupgrade"
+
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_noupgrade"
+    runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned"
+    runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned"
+    runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_noupgrade"
+    runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_noupgrade"
 
 
 #    runCompatibilityTest "${from_version}" "cow_enable_metadata_nonpartitioned"
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned"
-#    runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned"
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned_defaultpayload"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned_clustering"
@@ -83,7 +89,5 @@ for from_version in "${versions_to_check[@]}"; do
 #    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_clustering_noupgrade"
 #    runCompatibilityTest "${from_version}" "cow_disable_metadata_partitioned_clustering_noupgrade"
 #    runCompatibilityTest "${from_version}" "cow_enable_metadata_partitioned_noupgrade"
-#    runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_noupgrade"
-#    runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_noupgrade"
 #   runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_noupgrade2"
 done
