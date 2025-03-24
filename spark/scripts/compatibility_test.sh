@@ -4,7 +4,7 @@
 localOrS3="local"
 to_version=${HUDI_VERSION}
 from_version="0.15.0"
-spark_version="3.5"
+spark_version="3.4"
 test_jar=""
 conf=""
 expected_to_version=""
