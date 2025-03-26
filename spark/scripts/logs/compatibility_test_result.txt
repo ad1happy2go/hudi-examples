@@ -1,91 +1,40 @@
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_disable_metadata_nonpartitioned - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_disable_metadata_nonpartitioned_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_partitioned_0_15_0_1_1_0-SNAPSHOT
-Testing mor_disable_metadata_partitioned - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_disable_metadata_partitioned_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_disable_metadata_nonpartitioned - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_disable_metadata_nonpartitioned_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_enable_metadata_partitioned_0_15_0_1_1_0-SNAPSHOT
-Testing mor_disable_metadata_partitioned - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Failed - mor_disable_metadata_partitioned_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_non_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_non_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_nonpartitioned_bloom_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_nonpartitioned_bloom_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_nonpartitioned_bloom - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_nonpartitioned_bloom_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_partitioned_bloom - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_partitioned_bloom_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_partitioned_bloom_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_partitioned_bloom_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_nonpartitioned_bloom - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_nonpartitioned_bloom_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_nonpartitioned_bloom_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_nonpartitioned_bloom_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_partitioned_bloom - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_partitioned_bloom_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_partitioned_bloom_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_partitioned_bloom_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_nonpartitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_nonpartitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_nonpartitioned - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_nonpartitioned_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_partitioned_rli - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_partitioned_rli_0_15_0_1_1_0-SNAPSHOT
 Testing mor_enable_metadata_partitioned_rli_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
 Test Failed - mor_enable_metadata_partitioned_rli_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned_rli_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_partitioned_rli_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned_rli_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_partitioned_rli_noupgrade_0_15_0_1_1_0-SNAPSHOT
-Testing mor_enable_metadata_partitioned_rli_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
-Test Success - mor_enable_metadata_partitioned_rli_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_nonpartitioned - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_nonpartitioned_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_partitioned - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_partitioned_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_nonpartitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_nonpartitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_disable_metadata_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_disable_metadata_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_partitioned - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_partitioned_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_nonpartitioned - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_nonpartitioned_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_partitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_partitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
+Testing mor_enable_metadata_nonpartitioned_noupgrade - 0.15.0 <> 1.1.0-SNAPSHOT
+Test Success - mor_enable_metadata_nonpartitioned_noupgrade_0_15_0_1_1_0-SNAPSHOT
