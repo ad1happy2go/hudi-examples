@@ -1,3 +1,7 @@
 hoodie.metadata.enable=true
 hoodie.datasource.write.table.type=COPY_ON_WRITE
+hoodie.compact.inline=false
 hoodie.write.lock.provider=org.apache.hudi.client.transaction.lock.InProcessLockProvider
+hoodie.datasource.write.payload.class=org.apache.hudi.common.model.DefaultHoodieRecordPayload
+hoodie.clustering.inline.max.commits=3
+hoodie.clustering.inline=true

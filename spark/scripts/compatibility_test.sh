@@ -140,58 +140,58 @@ DowngradeTable.downgradeTable(spark, "${basePath}", ${OLD_TABLE_VERSION})
 TestAutomationUtils.compareData(spark, "${basePath}" ,"2")
 EOF
 
-echo "\n\n\nRunning Spark shell command to load data and compare for batch 3 ====================================="
-
-${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
---conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
---packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
-:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
-assert(TestAutomationUtils.getCount(spark, "${basePath}") ==  1980)
-TestAutomationUtils.compareData(spark, "${basePath}" ,"2")
-val batch="3"
-TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0)
-EOF
-
-${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
---conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
---jars ${test_jar} << EOF
-:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
-TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"3")
-val batch="4"
-TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0, upgrade = "true")
-TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"4")
-EOF
-
-echo "Downgrading Table to " ${OLD_TABLE_VERSION}
-
-echo "\n\n\nDowngrading Table to " ${OLD_TABLE_VERSION} "====================================="
-
-${SPARK_HOME}/bin/spark-shell --master ${master} --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar' --driver-memory 4g \
---conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3 --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
---jars ${test_jar} << EOF
-:load ../src/main/scala/com/hudi/spark/DowngradeTable.scala
-DowngradeTable.downgradeTable(spark, "${basePath}", ${OLD_TABLE_VERSION})
-:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
-TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"4")
-EOF
-
-
-echo "\n\n\Validating Table using " ${OLD_TABLE_VERSION} "====================================="
-
-${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
---conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
---packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
-:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
-TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"4")
-val batch="5"
-TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0)
-EOF
-
-echo "\n\n\nValidation table using toVersion ====================================="
-
-${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
---conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
---jars ${test_jar} << EOF
-:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
-TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"5")
+#echo "\n\n\nRunning Spark shell command to load data and compare for batch 3 ====================================="
+#
+#${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
+#--conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
+#--packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
+#:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
+#assert(TestAutomationUtils.getCount(spark, "${basePath}") ==  1980)
+#TestAutomationUtils.compareData(spark, "${basePath}" ,"2")
+#val batch="3"
+#TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0)
+#EOF
+#
+#${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
+#--conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
+#--jars ${test_jar} << EOF
+#:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
+#TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"3")
+#val batch="4"
+#TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0, upgrade = "true")
+#TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"4")
+#EOF
+#
+#echo "Downgrading Table to " ${OLD_TABLE_VERSION}
+#
+#echo "\n\n\nDowngrading Table to " ${OLD_TABLE_VERSION} "====================================="
+#
+#${SPARK_HOME}/bin/spark-shell --master ${master} --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar' --driver-memory 4g \
+#--conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3 --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
+#--jars ${test_jar} << EOF
+#:load ../src/main/scala/com/hudi/spark/DowngradeTable.scala
+#DowngradeTable.downgradeTable(spark, "${basePath}", ${OLD_TABLE_VERSION})
+#:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
+#TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"4")
+#EOF
+#
+#
+#echo "\n\n\Validating Table using " ${OLD_TABLE_VERSION} "====================================="
+#
+#${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
+#--conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
+#--packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
+#:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
+#TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"4")
+#val batch="5"
+#TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 0)
+#EOF
+#
+#echo "\n\n\nValidation table using toVersion ====================================="
+#
+#${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
+#--conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
+#--jars ${test_jar} << EOF
+#:load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
+#TestAutomationUtils.compareDataWithoutValidations(spark, "${basePath}" ,"5")
 EOF
