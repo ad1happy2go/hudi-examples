@@ -29,7 +29,7 @@ formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
 # List of from versions we want to run compatibility tests on
 # versions_to_check=("0.14.1" "0.14.0" "0.15.0")
-versions_to_check=("0.14.1")
+versions_to_check=("0.14.1" "0.15.0")
 
 function runCompatibilityTest() {
     local from_version=$1
