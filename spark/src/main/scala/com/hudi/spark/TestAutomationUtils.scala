@@ -14,7 +14,7 @@ import org.apache.hudi.table.upgrade.SparkUpgradeDowngradeHelper
 import org.apache.hudi.table.upgrade.UpgradeDowngrade
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.hudi.common.model.HoodieRecord.HOODIE_META_COLUMNS
-import org.apache.hudi.hadoop.fs.HadoopFSUtils
+//import org.apache.hudi.hadoop.fs.HadoopFSUtils
 import org.apache.hudi.client.SparkRDDWriteClient
 import org.apache.hudi.common.config.TypedProperties
 import scala.collection.JavaConverters._
@@ -49,22 +49,22 @@ object TestAutomationUtils {
       val updates = convertToStringList(dataGen.generateUpdates(numUpdates))
       val df = spark.read.json(spark.sparkContext.parallelize(updates, (numUpdates / 100).toInt)).withColumn("batch_id", lit(batch_id)).withColumn("mode", lit(UPDATE_MODE))
       df.write.format("hudi").options(configs).mode("append").save(basePath)
-      val metaClient = HoodieTableMetaClient.builder
-        .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
-        .setBasePath(basePath)
-        .build
-      if (false && metaClient.getTableConfig.isMetadataTableAvailable && !HoodieTableMetaClient.builder
-        .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
-        .setBasePath(metaClient.getMetaPath.toString + "/metadata")
-        .build.getActiveTimeline.lastInstant().get().getAction.equals(HoodieTimeline.COMMIT_ACTION)) {
-        rollbackLastInstant(spark, basePath, configs)
-        df.write.format("hudi").options(configs).mode("append").save(basePath)
+//      val metaClient = HoodieTableMetaClient.builder
+//        .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
+//        .setBasePath(basePath)
+//        .build
+//      if (false && metaClient.getTableConfig.isMetadataTableAvailable && !HoodieTableMetaClient.builder
+//        .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
+//        .setBasePath(metaClient.getMetaPath.toString + "/metadata")
+//        .build.getActiveTimeline.lastInstant().get().getAction.equals(HoodieTimeline.COMMIT_ACTION)) {
+//        rollbackLastInstant(spark, basePath, configs)
+//        df.write.format("hudi").options(configs).mode("append").save(basePath)
+//        df.write.format("parquet").save(basePath + "_parquet_" + batch_id + UPDATE_MODE)
+//        assert(spark.read.format("hudi").load(basePath).where(f"batch_id = '${batch_id}'").count() == spark.read.format("parquet").load(basePath + "_parquet_" + batch_id + INSERT_MODE).count())
+//      } else {
         df.write.format("parquet").save(basePath + "_parquet_" + batch_id + UPDATE_MODE)
         assert(spark.read.format("hudi").load(basePath).where(f"batch_id = '${batch_id}'").count() == spark.read.format("parquet").load(basePath + "_parquet_" + batch_id + INSERT_MODE).count())
-      } else {
-        df.write.format("parquet").save(basePath + "_parquet_" + batch_id + UPDATE_MODE)
-        assert(spark.read.format("hudi").load(basePath).where(f"batch_id = '${batch_id}'").count() == spark.read.format("parquet").load(basePath + "_parquet_" + batch_id + INSERT_MODE).count())
-      }
+//      }
     }
     if (numDeletes > 0) {
       val deletes = convertToStringList(dataGen.generateUpdates(numDeletes))
@@ -140,23 +140,23 @@ object TestAutomationUtils {
     assert(actualDF.except(expectedInserts).count() == 0)
   }
 
-  def rollbackLastInstant(spark: SparkSession, basePath: String, hudiOpts: Map[String, String]): Unit = {
-    val jsc = new JavaSparkContext(spark.sparkContext)
-    val metaClient = HoodieTableMetaClient.builder
-      .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
-      .setBasePath(basePath)
-      .build
-    val writeClient = new SparkRDDWriteClient(new HoodieSparkEngineContext(jsc), getWriteConfig(hudiOpts, basePath))
-      .rollback(metaClient.getActiveTimeline.getCommitsTimeline.lastInstant().get().getTimestamp)
-  }
-
-  protected def getWriteConfig(hudiOpts: Map[String, String], basePath: String): HoodieWriteConfig = {
-    val props = TypedProperties.fromMap(JavaConverters.mapAsJavaMapConverter(hudiOpts).asJava)
-    HoodieWriteConfig.newBuilder()
-      .withProps(props)
-      .withPath(basePath)
-      .build()
-  }
+//  def rollbackLastInstant(spark: SparkSession, basePath: String, hudiOpts: Map[String, String]): Unit = {
+//    val jsc = new JavaSparkContext(spark.sparkContext)
+//    val metaClient = HoodieTableMetaClient.builder
+//      .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
+//      .setBasePath(basePath)
+//      .build
+//    val writeClient = new SparkRDDWriteClient(new HoodieSparkEngineContext(jsc), getWriteConfig(hudiOpts, basePath))
+//      .rollback(metaClient.getActiveTimeline.getCommitsTimeline.lastInstant().get().getTimestamp)
+//  }
+//
+//  protected def getWriteConfig(hudiOpts: Map[String, String], basePath: String): HoodieWriteConfig = {
+//    val props = TypedProperties.fromMap(JavaConverters.mapAsJavaMapConverter(hudiOpts).asJava)
+//    HoodieWriteConfig.newBuilder()
+//      .withProps(props)
+//      .withPath(basePath)
+//      .build()
+//  }
 
   def getCount(spark: SparkSession, basePath:String):Long = {
     spark.read.format("hudi").load(basePath).count()

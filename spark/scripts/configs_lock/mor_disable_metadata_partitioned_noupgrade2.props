@@ -3,5 +3,5 @@ hoodie.datasource.write.table.type=COPY_ON_WRITE
 hoodie.metadata.enable=false
 hoodie.compact.inline=false
 hoodie.write.auto.upgrade=false
-hoodie.datasource.write.payload.class=org.apache.hudi.common.model.DefaultHoodieRecordPayload
+hoodie.datasource.write.payload.class=org.apache.hudi.common.model.OverwriteNonDefaultsWithLatestAvroPayload
 hoodie.write.table.version=6

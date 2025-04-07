@@ -2,6 +2,6 @@ hoodie.metadata.enable=false
 hoodie.datasource.write.table.type=COPY_ON_WRITE
 hoodie.datasource.write.partitionpath.field=partitionpath
 hoodie.clustering.inline=true
-hoodie.datasource.write.payload.class=org.apache.hudi.common.model.DefaultHoodieRecordPayload
+hoodie.datasource.write.payload.class=org.apache.hudi.common.model.OverwriteNonDefaultsWithLatestAvroPayload
 hoodie.compact.inline=false
 hoodie.write.lock.provider=org.apache.hudi.client.transaction.lock.InProcessLockProvider

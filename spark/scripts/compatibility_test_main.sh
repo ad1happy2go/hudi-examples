@@ -53,30 +53,35 @@ function runCompatibilityTest() {
 
 # Create properties file for each test case. The name of properties file should end with .props
 for from_version in "${versions_to_check[@]}"; do
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom_noupgrade"
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom_noupgrade"
-#
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom"
-#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom_noupgrade"
+
+#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom_noupgrade"
+#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli_noupgrade"
+#  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli"
+
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom_noupgrade"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom_noupgrade"
+
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom"
+  	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_bloom_noupgrade"
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom"
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_bloom_noupgrade"
-#
-#  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
+
+  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned"
-#
+
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli"
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli_noupgrade"
   	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_overwrite_payload_rli"
 
-#
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned"
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned"
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
-#    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_noupgrade"
+
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_noupgrade"
+    runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_noupgrade"
     runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned"
-#    runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned"
+    runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned"
     runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_noupgrade"
     runCompatibilityTest "${from_version}" "mor_enable_metadata_nonpartitioned_noupgrade"
 
