@@ -16,20 +16,20 @@ checkSuccess() {
 }
 
 
-SPARK_VERSION=3.4
+SPARK_VERSION=3.5
 HUDI_VERSION=1.1.0-SNAPSHOT
 # Change jar path, the jars should be placed at ${JARS_PATH}/${spark_version}
-JARS_PATH=/Users/ljain/codebase/jars
+JARS_PATH=/home/hadoop
 mkdir -p logs
 result_file="logs/compatibility_test_result.txt"
 spark_version=${SPARK_VERSION}
 test_version=${HUDI_VERSION}
-test_jar=${JARS_PATH}/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/hudi-cli-bundle_2.12-${test_version}.jar
+test_jar=${JARS_PATH}/hudi-spark${spark_version}-bundle_2.12-${test_version}.jar,${JARS_PATH}/hudi-cli-bundle_2.12-${test_version}.jar,${JARS_PATH}/hudi-aws-bundle-1.1.0-SNAPSHOT.jar
 formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
 # List of from versions we want to run compatibility tests on
 # versions_to_check=("0.14.1" "0.14.0" "0.15.0")
-versions_to_check=("0.14.1" "0.15.0")
+versions_to_check=("0.15.0")
 
 function runCompatibilityTest() {
     local from_version=$1
@@ -58,7 +58,8 @@ for from_version in "${versions_to_check[@]}"; do
 #  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli_noupgrade"
 #  	runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli"
 
-  	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom_noupgrade"
+        runCompatibilityTest "${from_version}" "mor_enable_metadata_partitioned_rli"
+	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom_noupgrade"
   	runCompatibilityTest "${from_version}" "mor_disable_metadata_nonpartitioned_bloom"
   	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom"
   	runCompatibilityTest "${from_version}" "mor_disable_metadata_partitioned_bloom_noupgrade"

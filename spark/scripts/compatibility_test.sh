@@ -4,7 +4,7 @@
 localOrS3="s3"
 to_version=${HUDI_VERSION}
 from_version="0.15.0"
-spark_version="3.4"
+spark_version="3.5"
 test_jar=""
 conf=""
 expected_to_version=""
@@ -78,7 +78,7 @@ echo "\n\nRunning Spark shell command to load data and compare for batch 1 =====
 
 ${SPARK_HOME}/bin/spark-shell --master ${master} --driver-memory 4g \
 --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer' --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' --conf 'spark.sql.warehouse.dir=hdfs://localhost:8020/user/hive/warehouse' --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension' --executor-cores 3  \
---packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version}<< EOF
+--packages org.apache.hudi:hudi-spark${spark_version}-bundle_2.12:${from_version},org.apache.hudi:hudi-aws-bundle:${from_version}<< EOF
 :load ../src/main/scala/com/hudi/spark/TestAutomationUtils.scala
 val batch="1"
 TestAutomationUtils.loadData(spark, "${basePath}" ,"${tableName}", conf="${conf}", batch_id = batch, numInserts = 1000, numUpdates = 100, numDeletes = 10, upgrade = "true")
