@@ -21,10 +21,9 @@ import scala.collection.JavaConverters._
 import scala.collection.{JavaConverters, mutable}
 import org.apache.hudi.common.table.timeline.HoodieTimeline
 
-Logger.getLogger("org").setLevel(Level.ERROR)
-Logger.getLogger("akka").setLevel(Level.ERROR)
-
 object TestAutomationUtils {
+  Logger.getLogger("org").setLevel(Level.ERROR)
+  Logger.getLogger("akka").setLevel(Level.ERROR)
   val INSERT_MODE="INSERT"
   val DELETE_MODE="DELETE"
   val UPDATE_MODE="UPDATE"
@@ -146,8 +145,19 @@ object TestAutomationUtils {
       .setConf(HadoopFSUtils.getStorageConfWithCopy(jsc.hadoopConfiguration))
       .setBasePath(basePath)
       .build
+    
+    val instant = metaClient.getActiveTimeline.getCommitsTimeline.lastInstant().get()
+    
+    // Use reflection to handle both API versions
+    val timestamp = try {
+      instant.getClass.getMethod("requestedTime").invoke(instant).asInstanceOf[String]
+    } catch {
+      case _: NoSuchMethodException => 
+        instant.getClass.getMethod("getTimestamp").invoke(instant).asInstanceOf[String]
+    }
+    
     val writeClient = new SparkRDDWriteClient(new HoodieSparkEngineContext(jsc), getWriteConfig(hudiOpts, basePath))
-      .rollback(metaClient.getActiveTimeline.getCommitsTimeline.lastInstant().get().getTimestamp)
+      .rollback(timestamp)
   }
 
   protected def getWriteConfig(hudiOpts: Map[String, String], basePath: String): HoodieWriteConfig = {
