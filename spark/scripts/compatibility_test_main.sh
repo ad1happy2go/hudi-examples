@@ -55,8 +55,20 @@ function runCompatibilityTest() {
 
 # Create properties file for each test case. The name of properties file should end with .props
 for from_version in "${versions_to_check[@]}"; do
-    runCompatibilityTest "${from_version}" "basic_cow"
-
-
-# check what are properties in clustering and move to basic profiles all should have clusrtering
+    #runCompatibilityTest "${from_version}" "basic_cow"
+    runCompatibilityTest "${from_version}" "basic_mor"
+    runCompatibilityTest "${from_version}" "cow_partitioned"
+    runCompatibilityTest "${from_version}" "cow_partitioned_defaultPayload"
+    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_disabled"
+    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled"
+    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled_recordIndexEnabled"
+    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled_simpleIndexEnabled"
+    runCompatibilityTest "${from_version}" "cow_partitioned_overwritePayload"
+    runCompatibilityTest "${from_version}" "mor_partitioned"
+    runCompatibilityTest "${from_version}" "mor_partitioned_defaultPayload"
+    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_disabled"
+    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled"
+    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled_recordIndexEnabled"
+    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled_simpleIndexEnabled"
+    runCompatibilityTest "${from_version}" "mor_partitioned_overwritePayload"
 done
