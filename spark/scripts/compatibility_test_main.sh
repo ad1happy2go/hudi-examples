@@ -28,12 +28,12 @@ formatted_test_version=$(echo "$test_version" | sed 's/\./_/g')
 
 # List of from versions we want to run compatibility tests on
 # versions_to_check=("0.14.1" "0.14.0" "0.15.0")
-versions_to_check=("0.15.0")
+versions_to_check=("1.0.2")
 
 function runCompatibilityTest() {
     local from_version=$1
     local test=$2
-    local expected_to_version="6"
+    local expected_to_version="9"
 
 #    if [[ ${test} == *"noupgrade"* ]]; then
 #        local expected_to_version="6"
@@ -55,20 +55,20 @@ function runCompatibilityTest() {
 
 # Create properties file for each test case. The name of properties file should end with .props
 for from_version in "${versions_to_check[@]}"; do
-     #  runCompatibilityTest "${from_version}" "basic_cow"
+     runCompatibilityTest "${from_version}" "basic_cow"
      runCompatibilityTest "${from_version}" "basic_mor"
-     #runCompatibilityTest "${from_version}" "cow_partitioned"
-#    runCompatibilityTest "${from_version}" "cow_partitioned_defaultPayload"
+     runCompatibilityTest "${from_version}" "cow_partitioned"
+     runCompatibilityTest "${from_version}" "cow_partitioned_defaultPayload"
 #    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_disabled"
-#    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled"
+     runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled"
 #    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled_recordIndexEnabled"
-#    runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled_simpleIndexEnabled"
-#    runCompatibilityTest "${from_version}" "cow_partitioned_overwritePayload"
-     #runCompatibilityTest "${from_version}" "mor_partitioned"
-#    runCompatibilityTest "${from_version}" "mor_partitioned_defaultPayload"
+     runCompatibilityTest "${from_version}" "cow_partitioned_metadata_enabled_simpleIndexEnabled"
+     runCompatibilityTest "${from_version}" "cow_partitioned_overwritePayload"
+     runCompatibilityTest "${from_version}" "mor_partitioned"
+     runCompatibilityTest "${from_version}" "mor_partitioned_defaultPayload"
 #    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_disabled"
-#    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled"
+     runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled"
 #    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled_recordIndexEnabled"
-#    runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled_simpleIndexEnabled"
-#    runCompatibilityTest "${from_version}" "mor_partitioned_overwritePayload"
+     runCompatibilityTest "${from_version}" "mor_partitioned_metadata_enabled_simpleIndexEnabled"
+     runCompatibilityTest "${from_version}" "mor_partitioned_overwritePayload"
 done

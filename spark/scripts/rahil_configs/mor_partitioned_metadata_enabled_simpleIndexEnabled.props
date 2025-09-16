@@ -3,4 +3,4 @@ hoodie.clustering.inline=true
 hoodie.datasource.write.partitionpath.field=partitionpath
 hoodie.metadata.enable=true
 hoodie.index.type=SIMPLE
-hoodie.write.table.version=6
+hoodie.write.table.version=9
