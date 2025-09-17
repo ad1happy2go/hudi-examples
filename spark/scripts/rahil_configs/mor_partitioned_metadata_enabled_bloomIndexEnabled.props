@@ -2,4 +2,6 @@ hoodie.datasource.write.table.type=MERGE_ON_READ
 hoodie.clustering.inline=true
 hoodie.datasource.write.partitionpath.field=partitionpath
 hoodie.metadata.enable=true
+hoodie.bloom.index.use.metadata=true
+hoodie.index.type=BLOOM
 hoodie.write.table.version=9

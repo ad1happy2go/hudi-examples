@@ -2,3 +2,4 @@ hoodie.datasource.write.table.type=COPY_ON_WRITE
 hoodie.clustering.inline=true
 hoodie.datasource.write.partitionpath.field=partitionpath
 hoodie.datasource.write.payload.class=org.apache.hudi.common.model.OverwriteWithLatestAvroPayload
+hoodie.write.table.version=9
