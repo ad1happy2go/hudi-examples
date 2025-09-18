@@ -1,0 +1,6 @@
+hoodie.datasource.write.table.type=MERGE_ON_READ
+hoodie.clustering.inline=true
+hoodie.datasource.write.partitionpath.field=partitionpath
+hoodie.metadata.enable=true
+hoodie.metadata.record.index.enable=true
+hoodie.index.type=RECORD_INDEX

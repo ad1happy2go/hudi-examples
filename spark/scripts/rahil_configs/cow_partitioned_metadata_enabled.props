@@ -1,0 +1,4 @@
+hoodie.datasource.write.table.type=COPY_ON_WRITE
+hoodie.clustering.inline=true
+hoodie.datasource.write.partitionpath.field=partitionpath
+hoodie.metadata.enable=true
