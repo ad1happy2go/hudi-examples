@@ -4,4 +4,3 @@ hoodie.datasource.write.partitionpath.field=partitionpath
 hoodie.metadata.enable=true
 hoodie.bloom.index.use.metadata=true
 hoodie.index.type=BLOOM
-hoodie.write.table.version=9
